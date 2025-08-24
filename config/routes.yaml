@@ -1,0 +1,6 @@
+routes:
+  # - name: "about_show"
+  #   path: /about
+  #   method: GET
+  #   controller: App\Controller\AboutController
+  #   action: show

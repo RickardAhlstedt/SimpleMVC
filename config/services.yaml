@@ -1,0 +1,26 @@
+services:
+  SimpleMVC\Service\LoggerService:
+    arguments:
+      - '%PATH_LOG%'
+
+  SimpleMVC\Core\HTTP\RequestStack: ~
+
+  SimpleMVC\Core\Config: ~
+
+  SimpleMVC\Templating\Templating:
+    arguments:
+      - '%PATH_TEMPLATE%'
+      - '%PATH_CACHE%'
+
+  SimpleMVC\Event\EventDispatcher: ~
+
+# Controllers
+  App\Controller\HomeController:
+    arguments:
+      - '@SimpleMVC\Core\HTTP\RequestStack'
+      - '@SimpleMVC\Templating\Templating'
+
+# Event Listeners
+  App\EventListener\LogRequestEventListener:
+    arguments:
+      - '@SimpleMVC\Service\LoggerService'
