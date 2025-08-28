@@ -18,6 +18,8 @@ class EnvVars
             '%PATH_PUBLIC%'   => defined('PATH_PUBLIC') ? PATH_PUBLIC : '',
             '%PATH_VENDOR%'   => defined('PATH_VENDOR') ? PATH_VENDOR : '',
             '%PATH_LOG%'      => defined('PATH_LOG') ? PATH_LOG : '',
+            '%PATH_VAR%'      => defined('PATH_VAR') ? PATH_VAR : '',
+            '%PATH_VAR_CONFIG%' => defined('PATH_VAR_CONFIG') ? PATH_VAR_CONFIG : '',
         ];
     }
 

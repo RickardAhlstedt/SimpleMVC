@@ -47,6 +47,10 @@ class CacheClearCommand extends BaseCommand
         $method->setAccessible(true);
         $method->invoke($app);
 
+        $method = $reflection->getMethod('buildContainer');
+        $method->setAccessible(true);
+        $method->invoke($app);
+
         echo "Cache warmed up.\n";
         return 0;
     }

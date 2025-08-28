@@ -1,7 +1,19 @@
-[INFO] Incoming request to route: Array
-[INFO] Incoming request to route: Array
-[INFO] Incoming request to route: Array
-[INFO] Incoming request to route: Array
+[INFO] Incoming request to route: array (
+  'name' => 'home_index',
+  'path' => '/',
+  'method' => 'GET',
+  'controller' => 'App\\Controller\\HomeController',
+  'action' => 'index',
+  'middleware' => '',
+)
+[INFO] Incoming request to route: array (
+  'name' => 'home_index',
+  'path' => '/',
+  'method' => 'GET',
+  'controller' => 'App\\Controller\\HomeController',
+  'action' => 'index',
+  'middleware' => '',
+)
 [INFO] Incoming request to route: array (
   'name' => 'home_index',
   'path' => '/',

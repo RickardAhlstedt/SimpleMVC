@@ -1,0 +1,26 @@
+services:
+  SimpleMVC\Service\LoggerService:
+    arguments:
+      - '%PATH_LOG%'
+
+  SimpleMVC\Core\HTTP\RequestStack: ~
+
+  SimpleMVC\Core\Config: ~
+
+  SimpleMVC\Event\EventDispatcher: ~
+
+  SimpleMVC\Database\Driver\DatabaseInterface: ~
+  SimpleMVC\Database\EntityManager: ~
+  SimpleMVC\Database\Repository: ~
+
+  SimpleMVC\Templating\Templating:
+    arguments:
+      - '%PATH_TEMPLATE%'
+      - '%PATH_CACHE%'
+
+  # Controllers
+  SimpleMVC\Core\HTTP\AbstractController:
+    arguments:
+        - '@SimpleMVC\Core\HTTP\RequestStack'
+        - '@SimpleMVC\Templating\Templating'
+        - '@SimpleMVC\Database\Driver\DatabaseInterface'

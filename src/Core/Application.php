@@ -151,6 +151,36 @@ class Application
             });
         }
 
+        if (!empty(Config::getInstance()->get('database'))) {
+            $dbConfig = Config::getInstance()->get('database');
+
+            switch($dbConfig['driver']) {
+                case 'sqlite':
+                    if (isset($dbConfig['path']) && $dbConfig['path'] !== ':memory:') {
+                        $dir = dirname($dbConfig['path']);
+                        if (!is_dir($dir)) {
+                            mkdir($dir, 0777, true);
+                        }
+                        if (!file_exists($dbConfig['path'])) {
+                            touch($dbConfig['path']);
+                        }
+                    }
+                    $driver = new \SimpleMVC\Database\Driver\Sqlite\SqliteDatabaseDriver();
+                    $driver->connect($dbConfig);
+                    $container->set(\SimpleMVC\Database\Driver\DatabaseInterface::class, fn() => $driver);
+                    break;
+                // Add other drivers here (e.g. MySQL, PostgreSQL)
+                case 'pdo':
+                    $driver = new \SimpleMVC\Database\Driver\Pdo\PdoDatabaseDriver();
+                    $driver->connect($dbConfig);
+                    $container->set(\SimpleMVC\Database\Driver\DatabaseInterface::class, fn() => $driver);
+                    break;
+                default:
+                    throw new \RuntimeException('Unsupported database driver: ' . $dbConfig['driver']);
+
+            }
+        }
+
         $dispatcher = $container->get(\SimpleMVC\Event\EventDispatcher::class);
         foreach ($serviceDefs as $id => $_) {
             if (method_exists($id, 'getSubscribedEvents')) {

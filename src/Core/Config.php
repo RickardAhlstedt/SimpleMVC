@@ -11,10 +11,12 @@ class Config
     private array $config = [];
     private static ?Config $instance = null;
 
+    private array $envVars = [];    
+
     public static function getInstance(): Config
     {
         if (self::$instance === null) {
-            self::$instance = new self(PATH_CONFIG);
+            self::$instance = new self([PATH_CONFIG, PATH_VAR . '/config']);
         }
         return self::$instance;
     }
@@ -24,12 +26,26 @@ class Config
         self::$instance = $config;
     }
 
-    public function __construct(string $configDir)
+    public function __construct(array $configDirs)
     {
-        // Load all YAML files in the config directory
-        foreach (glob($configDir . '/*.yaml') as $file) {
-            $name = basename($file, '.yaml');
-            $this->config[$name] = Yaml::parseFile($file);
+        $this->envVars = \SimpleMVC\Support\EnvVars::getEnvVars();
+        foreach ($configDirs as $dir) {
+            $this->loadConfigFromDir($dir);
+        }
+    }
+
+    public function loadConfigFromDir(string $dir): void
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+
+        $files = glob($dir . '/*.yaml');
+        foreach ($files as $file) {
+            $configData = Yaml::parseFile($file);
+            if (is_array($configData)) {
+                $this->config = array_merge_recursive($this->config, \SimpleMVC\Compiler\Compiler::replacePlaceholders($configData, $this->envVars));
+            }
         }
     }
 

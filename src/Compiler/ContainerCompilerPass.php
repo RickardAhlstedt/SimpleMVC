@@ -17,18 +17,28 @@ class ContainerCompilerPass implements CompilerPassInterface
 
     public function process(string $cacheDir): void
     {
-        $servicesFile = $this->configDir . '/services.yaml';
-        if (!file_exists($servicesFile)) {
-            return;
-        }
+        $servicesFiles = [
+            $this->configDir . '/services.yaml',
+            PATH_VAR_CONFIG . '/services.yaml',
+        ];
+
+        $services = [];
 
         // Gather environment variables for replacement
         $envVars = \SimpleMVC\Support\EnvVars::getEnvVars();
 
-        $yaml = Yaml::parseFile($servicesFile);
-        $services = $yaml['services'] ?? [];
+        foreach ($servicesFiles as $servicesFile) {
+            if (!file_exists($servicesFile)) {
+                continue;
+            }
 
-        $services = \SimpleMVC\Compiler\Compiler::replacePlaceholders($services, $envVars);
+            $yaml = Yaml::parseFile($servicesFile);
+            $parsedServices = $yaml['services'] ?? [];
+
+            $parsedServices = \SimpleMVC\Compiler\Compiler::replacePlaceholders($parsedServices, $envVars);
+
+            $services = array_replace_recursive($services, $parsedServices);
+        }
 
         $output = '<?php return ' . var_export($services, true) . ';';
         file_put_contents($cacheDir . '/container.php', $output);
