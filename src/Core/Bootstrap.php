@@ -83,11 +83,7 @@ class Bootstrap
                         break;
                     case 'database':
                         $dbDriver = $container->get(\SimpleMVC\Database\Driver\DatabaseInterface::class);
-                        if (!method_exists($dbDriver, 'getConnection')) {
-                            throw new \RuntimeException('Database driver does not provide a PDO connection for DatabaseCache');
-                        }
-                        $pdo = $dbDriver->getConnection();
-                        $cacheDriver = new \SimpleMVC\Cache\DatabaseCache($pdo);
+                        $cacheDriver = new \SimpleMVC\Cache\DatabaseCache($dbDriver);
                         $container->set(\SimpleMVC\Cache\CacheInterface::class, fn() => $cacheDriver);
                         break;
                     case 'redis':
