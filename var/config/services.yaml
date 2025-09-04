@@ -7,6 +7,8 @@ services:
 
   SimpleMVC\Core\Config: ~
 
+  SimpleMVC\Core\Container: ~
+
   SimpleMVC\Event\EventDispatcher: ~
 
   SimpleMVC\Database\Driver\DatabaseInterface: ~
@@ -16,6 +18,14 @@ services:
     arguments:
       - '@SimpleMVC\Database\Driver\DatabaseInterface'
       - '%PATH_MIGRATIONS%'
+
+  SimpleMVC\Queue\JobRegistry:
+    arguments:
+      - '@SimpleMVC\Core\Container'
+
+  SimpleMVC\Queue\DatabaseQueueDriver:
+    arguments:
+      - '@SimpleMVC\Database\Driver\DatabaseInterface'
 
   SimpleMVC\Templating\Templating:
     arguments:

@@ -38,6 +38,8 @@ class HomeController extends \SimpleMVC\Core\HTTP\AbstractController
         // var_dump($fetched);
         // echo '</pre>';
 
+        $queue = Container::getInstance()?->get(\SimpleMVC\Queue\DatabaseQueueDriver::class);
+        $queue->dispatch('TestJob', [$request]);
 
         return new Response($this->render('home.html.twig', ['name' => 'World']), 200);
     }

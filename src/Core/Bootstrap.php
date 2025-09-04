@@ -2,6 +2,8 @@
 
 namespace SimpleMVC\Core;
 
+use SimpleMVC\Queue\JobInterface;
+
 class Bootstrap
 {
     public static function buildContainer(string $cacheDir): Container
@@ -99,6 +101,55 @@ class Bootstrap
                 }
             }
         }
+
+        // Register and configure JobRegistry
+        $jobRegistry = new \SimpleMVC\Queue\JobRegistry($container);
+
+        $jobDirectories = [
+            rtrim(defined('PATH_APP') ? PATH_APP : '', '/') . '/Jobs',
+            rtrim(defined('PATH_CORE') ? PATH_CORE : '', '/') . '/../src/Jobs',
+        ];
+
+        foreach ($jobDirectories as $dir) {
+            if (!is_dir($dir)) {
+                continue;
+            }
+            $files = scandir($dir);
+            if ($files === false) {
+                continue;
+            }
+            foreach ($files as $file) {
+                if (pathinfo($file, PATHINFO_EXTENSION) !== 'php') {
+                    continue;
+                }
+                $filePath = $dir . '/' . $file;
+                $contents = file_get_contents($filePath);
+                if ($contents === false) {
+                    continue;
+                }
+                // Extract namespace and class name
+                $namespace = '';
+                $className = pathinfo($file, PATHINFO_FILENAME);
+
+                if (preg_match('/namespace\s+([^;]+);/', $contents, $matches)) {
+                    $namespace = trim($matches[1]);
+                }
+
+                $fqcn = $namespace ? $namespace . '\\' . $className : $className;
+
+                if (!class_exists($fqcn)) {
+                    require_once $filePath;
+                }
+
+                if (class_exists($fqcn) && in_array(JobInterface::class, class_implements($fqcn), true)) {
+                    $jobRegistry->register($className, $fqcn);
+                    $jobClass = new $fqcn();
+                    $container->set($fqcn, fn() => $jobClass);
+                }
+            }
+        }
+
+        $container->set(\SimpleMVC\Queue\JobRegistry::class, fn() => $jobRegistry);
 
         $dispatcher = $container->get(\SimpleMVC\Event\EventDispatcher::class);
         foreach ($serviceDefs as $id => $_) {
