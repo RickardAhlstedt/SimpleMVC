@@ -140,4 +140,20 @@ class Repository
         }
         return $entity;
     }
+
+    public function findOneBy(array $criteria): ?object
+    {
+        $conditions = [];
+        $params = [];
+        foreach ($criteria as $property => $value) {
+            $column = $this->propertyToColumnMap[$property] ?? $property;
+            $conditions[] = "$column = :$property";
+            $params[$property] = $value;
+        }
+        $where = implode(' AND ', $conditions);
+        $sql = "SELECT * FROM {$this->table} WHERE $where LIMIT 1";
+        $stmt = $this->driver->query($sql, $params);
+        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $data ? $this->mapToEntity($data) : null;
+    }
 }

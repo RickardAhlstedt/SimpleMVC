@@ -12,6 +12,7 @@ define('PATH_VENDOR', PATH_ROOT . '/vendor');
 define('PATH_LOG', PATH_ROOT . '/logs/app.log');
 define('PATH_VAR', PATH_ROOT . '/var');
 define('PATH_VAR_CONFIG', PATH_VAR . '/config');
+define('PATH_MIGRATIONS', PATH_ROOT . '/migrations');
 
 require_once __DIR__ . '/vendor/autoload.php';
 

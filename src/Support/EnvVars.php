@@ -20,6 +20,7 @@ class EnvVars
             '%PATH_LOG%'      => defined('PATH_LOG') ? PATH_LOG : '',
             '%PATH_VAR%'      => defined('PATH_VAR') ? PATH_VAR : '',
             '%PATH_VAR_CONFIG%' => defined('PATH_VAR_CONFIG') ? PATH_VAR_CONFIG : '',
+            '%PATH_MIGRATIONS%' => defined('PATH_MIGRATIONS') ? PATH_MIGRATIONS : '',
         ];
     }
 

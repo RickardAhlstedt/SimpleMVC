@@ -79,8 +79,8 @@ APP_TIMEZONE=UTC
 - [ ] Entity & DTO Support
 - [X] PHP Templating Engine
 - [X] Template Caching
-- [ ] Cache Interface & Drivers (File, MySQL, Redis)
-- [ ] Database abstraction layer and entity-creation
+- [X] Cache Interface & Drivers (File, MySQL, Redis)
+- [X] Database abstraction layer and entity-creation
 - [X] CLI Tool
 - [X] Command Discovery & Compilation
 - [X] Cache Invalidation Commands

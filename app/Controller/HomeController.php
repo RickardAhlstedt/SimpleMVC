@@ -6,10 +6,12 @@ namespace App\Controller;
 
 use SimpleMVC\Attribute\Controller;
 use SimpleMVC\Attribute\Route;
+use SimpleMVC\Core\Container;
 use SimpleMVC\Core\HTTP\RequestStack;
 use SimpleMVC\Core\HTTP\Response;
 
 use SimpleMVC\Database\EntityManager;
+use SimpleMVC\Security\PasswordHasher;
 
 #[Controller]
 class HomeController extends \SimpleMVC\Core\HTTP\AbstractController

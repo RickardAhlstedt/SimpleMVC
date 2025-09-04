@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'rickard.ahlstedt/simple-mvc',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '2447caa800d4bf72624348af48cb81a60b1a6a83',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'rickard.ahlstedt/simple-mvc' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '2447caa800d4bf72624348af48cb81a60b1a6a83',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -12,11 +12,21 @@ services:
   SimpleMVC\Database\Driver\DatabaseInterface: ~
   SimpleMVC\Database\EntityManager: ~
   SimpleMVC\Database\Repository: ~
+  SimpleMVC\Database\Migration\Migrator:
+    arguments:
+      - '@SimpleMVC\Database\Driver\DatabaseInterface'
+      - '%PATH_MIGRATIONS%'
 
   SimpleMVC\Templating\Templating:
     arguments:
       - '%PATH_TEMPLATE%'
       - '%PATH_CACHE%'
+
+  SimpleMVC\Auth\AuthManager:
+    arguments:
+      - '@SimpleMVC\Database\EntityManager'
+
+  SimpleMVC\Security\PasswordHasher: ~
 
   # Controllers
   SimpleMVC\Core\HTTP\AbstractController:

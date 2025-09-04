@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 
 declare(strict_types=1);
@@ -13,9 +14,11 @@ define('PATH_VENDOR', PATH_ROOT . '/vendor');
 define('PATH_LOG', PATH_ROOT . '/logs/app.log');
 define('PATH_VAR', PATH_ROOT . '/var');
 define('PATH_VAR_CONFIG', PATH_VAR . '/config');
+define('PATH_MIGRATIONS', PATH_ROOT . '/migrations');
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use SimpleMVC\Core\Bootstrap;
 use SimpleMVC\Discovery\CommandDiscovery;
 
 // Load extra commands from config cache
@@ -46,10 +49,12 @@ if (!$commandName || !isset($commandMap[$commandName])) {
     exit(1);
 }
 
+$container = Bootstrap::buildContainer(PATH_CACHE);
+
 // Instantiate and run the command
 $cmdClass = $commandMap[$commandName]['class'];
 /** @var \SimpleMVC\CLI\BaseCommand $command */
-$command = new $cmdClass();
+$command = new $cmdClass($container);
 
 if (in_array('--help', $args, true)) {
     echo $command->getHelp() . PHP_EOL;

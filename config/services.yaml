@@ -1,4 +1,10 @@
 services:
+# Services
+  App\Service\UserRegistrationService:
+    arguments:
+      - '@SimpleMVC\Database\EntityManager'
+      - '@SimpleMVC\Security\PasswordHasher'
+
 # Controllers
   App\Controller\HomeController:
     arguments:

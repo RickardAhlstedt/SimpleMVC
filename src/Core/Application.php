@@ -119,79 +119,8 @@ class Application
 
     private function buildContainer(): void
     {
-        $container = new Container();
-        $serviceDefs = require $this->cacheDir . '/container.php';
+        $container = Bootstrap::buildContainer(PATH_CACHE);
 
-        // Define available placeholders
-        $vars = [
-            '%PATH_ROOT%'     => defined('PATH_ROOT') ? PATH_ROOT : '',
-            '%PATH_CORE%'     => defined('PATH_CORE') ? PATH_CORE : '',
-            '%PATH_APP%'      => defined('PATH_APP') ? PATH_APP : '',
-            '%PATH_CONFIG%'   => defined('PATH_CONFIG') ? PATH_CONFIG : '',
-            '%PATH_CACHE%'    => defined('PATH_CACHE') ? PATH_CACHE : '',
-            '%PATH_TEMPLATE%' => defined('PATH_TEMPLATE') ? PATH_TEMPLATE : '',
-            '%PATH_PUBLIC%'   => defined('PATH_PUBLIC') ? PATH_PUBLIC : '',
-            '%PATH_VENDOR%'   => defined('PATH_VENDOR') ? PATH_VENDOR : '',
-            '%PATH_LOG%'      => defined('PATH_LOG') ? PATH_LOG : '',
-        ];
-
-        foreach ($serviceDefs as $id => $definition) {
-            $container->set($id, function($c) use ($id, $definition, $vars) {
-                $args = [];
-                foreach ($definition['arguments'] ?? [] as $arg) {
-                    if (is_string($arg) && str_starts_with($arg, '@')) {
-                        $args[] = $c->get(substr($arg, 1));
-                    } elseif (is_string($arg) && isset($vars[$arg])) {
-                        $args[] = $vars[$arg];
-                    } else {
-                        $args[] = $arg;
-                    }
-                }
-                return new $id(...$args);
-            });
-        }
-
-        if (!empty(Config::getInstance()->get('database'))) {
-            $dbConfig = Config::getInstance()->get('database');
-
-            switch($dbConfig['driver']) {
-                case 'sqlite':
-                    if (isset($dbConfig['path']) && $dbConfig['path'] !== ':memory:') {
-                        $dir = dirname($dbConfig['path']);
-                        if (!is_dir($dir)) {
-                            mkdir($dir, 0777, true);
-                        }
-                        if (!file_exists($dbConfig['path'])) {
-                            touch($dbConfig['path']);
-                        }
-                    }
-                    $driver = new \SimpleMVC\Database\Driver\Sqlite\SqliteDatabaseDriver();
-                    $driver->connect($dbConfig);
-                    $container->set(\SimpleMVC\Database\Driver\DatabaseInterface::class, fn() => $driver);
-                    break;
-                // Add other drivers here (e.g. MySQL, PostgreSQL)
-                case 'pdo':
-                    $driver = new \SimpleMVC\Database\Driver\Pdo\PdoDatabaseDriver();
-                    $driver->connect($dbConfig);
-                    $container->set(\SimpleMVC\Database\Driver\DatabaseInterface::class, fn() => $driver);
-                    break;
-                default:
-                    throw new \RuntimeException('Unsupported database driver: ' . $dbConfig['driver']);
-
-            }
-        }
-
-        $dispatcher = $container->get(\SimpleMVC\Event\EventDispatcher::class);
-        foreach ($serviceDefs as $id => $_) {
-            if (method_exists($id, 'getSubscribedEvents')) {
-                $listener = $container->get($id);
-                foreach ($id::getSubscribedEvents() as $eventName => $method) {
-                    $dispatcher->addListener($eventName, [$listener, $method]);
-                }
-            }
-        }
-
-        Container::setInstance($container);
     }
 
     private function dispatch(string $name, array $data = []): void

@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace SimpleMVC\CLI;
 
+use SimpleMVC\Core\Container;
+
 abstract class BaseCommand
 {
+    public function __construct(
+        protected Container $container
+    ) {}
+
     /**
      * Execute the command.
      * @param array $args Arguments passed to the command (argv)

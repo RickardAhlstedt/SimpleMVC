@@ -1,0 +1,3 @@
+cache:
+  driver: file
+  path: "%PATH_CACHE%/data"

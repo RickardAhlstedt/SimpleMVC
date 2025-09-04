@@ -15,6 +15,8 @@
     ],
     "require": {
         "symfony/yaml": "^7.3",
-        "twig/twig": "^3.21"
+        "twig/twig": "^3.21",
+        "ext-pdo": "*",
+        "ext-redis": "*"
     }
 }
