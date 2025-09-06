@@ -28,9 +28,9 @@ abstract class AbstractController
     /**
      * Get the current request.
      */
-    protected function getRequest(): Request
+    protected function getRequest(): RequestStack
     {
-        return $this->requestStack->getCurrentRequest();
+        return $this->requestStack;
     }
 
     /**

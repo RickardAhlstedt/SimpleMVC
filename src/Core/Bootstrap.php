@@ -24,22 +24,6 @@ class Bootstrap
             '%PATH_LOG%'      => defined('PATH_LOG') ? PATH_LOG : '',
         ];
 
-        foreach ($serviceDefs as $id => $definition) {
-            $container->set($id, function($c) use ($id, $definition, $vars) {
-                $args = [];
-                foreach ($definition['arguments'] ?? [] as $arg) {
-                    if (is_string($arg) && str_starts_with($arg, '@')) {
-                        $args[] = $c->get(substr($arg, 1));
-                    } elseif (is_string($arg) && isset($vars[$arg])) {
-                        $args[] = $vars[$arg];
-                    } else {
-                        $args[] = $arg;
-                    }
-                }
-                return new $id(...$args);
-            });
-        }
-
         if (!empty(Config::getInstance()->get('database'))) {
             $dbConfig = Config::getInstance()->get('database');
 
@@ -70,36 +54,52 @@ class Bootstrap
                     throw new \RuntimeException('Unsupported database driver: ' . $dbConfig['driver']);
 
             }
+        }
 
-            // Cache system wiring
-            $cacheConfig = Config::getInstance()->get('cache');
-            if (!empty($cacheConfig) && isset($cacheConfig['driver'])) {
-                switch ($cacheConfig['driver']) {
-                    case 'file':
-                        $cachePath = $cacheConfig['path'] ?? '';
-                        if ($cachePath && !is_dir($cachePath) && !mkdir($cachePath, 0777, true) && !is_dir($cachePath)) {
-                            throw new \RuntimeException(sprintf('Cache directory "%s" was not created', $cachePath));
-                        }
-                        $cacheDriver = new \SimpleMVC\Cache\FileCache($cachePath);
-                        $container->set(\SimpleMVC\Cache\CacheInterface::class, fn() => $cacheDriver);
-                        break;
-                    case 'database':
-                        $dbDriver = $container->get(\SimpleMVC\Database\Driver\DatabaseInterface::class);
-                        $cacheDriver = new \SimpleMVC\Cache\DatabaseCache($dbDriver);
-                        $container->set(\SimpleMVC\Cache\CacheInterface::class, fn() => $cacheDriver);
-                        break;
-                    case 'redis':
-                        $host = $cacheConfig['host'] ?? '127.0.0.1';
-                        $port = $cacheConfig['port'] ?? 6379;
-                        $redis = new \Redis();
-                        $redis->connect($host, $port);
-                        $cacheDriver = new \SimpleMVC\Cache\RedisCache($redis);
-                        $container->set(\SimpleMVC\Cache\CacheInterface::class, fn() => $cacheDriver);
-                        break;
-                    default:
-                        throw new \RuntimeException('Unsupported cache driver: ' . $cacheConfig['driver']);
-                }
+        // Cache system wiring
+        $cacheConfig = Config::getInstance()->get('cache');
+        if (!empty($cacheConfig) && isset($cacheConfig['driver'])) {
+            switch ($cacheConfig['driver']) {
+                case 'file':
+                    $cachePath = $cacheConfig['path'] ?? '';
+                    if ($cachePath && !is_dir($cachePath) && !mkdir($cachePath, 0777, true) && !is_dir($cachePath)) {
+                        throw new \RuntimeException(sprintf('Cache directory "%s" was not created', $cachePath));
+                    }
+                    $cacheDriver = new \SimpleMVC\Cache\FileCache($cachePath);
+                    $container->set(\SimpleMVC\Cache\CacheInterface::class, fn() => $cacheDriver);
+                    break;
+                case 'database':
+                    $dbDriver = $container->get(\SimpleMVC\Database\Driver\DatabaseInterface::class);
+                    $cacheDriver = new \SimpleMVC\Cache\DatabaseCache($dbDriver);
+                    $container->set(\SimpleMVC\Cache\CacheInterface::class, fn() => $cacheDriver);
+                    break;
+                case 'redis':
+                    $host = $cacheConfig['host'] ?? '127.0.0.1';
+                    $port = $cacheConfig['port'] ?? 6379;
+                    $redis = new \Redis();
+                    $redis->connect($host, $port);
+                    $cacheDriver = new \SimpleMVC\Cache\RedisCache($redis);
+                    $container->set(\SimpleMVC\Cache\CacheInterface::class, fn() => $cacheDriver);
+                    break;
+                default:
+                    throw new \RuntimeException('Unsupported cache driver: ' . $cacheConfig['driver']);
             }
+        }
+
+        foreach ($serviceDefs as $id => $definition) {
+            $container->set($id, function($c) use ($id, $definition, $vars) {
+                $args = [];
+                foreach ($definition['arguments'] ?? [] as $arg) {
+                    if (is_string($arg) && str_starts_with($arg, '@')) {
+                        $args[] = $c->get(substr($arg, 1));
+                    } elseif (is_string($arg) && isset($vars[$arg])) {
+                        $args[] = $vars[$arg];
+                    } else {
+                        $args[] = $arg;
+                    }
+                }
+                return new $id(...$args);
+            });
         }
 
         // Register and configure JobRegistry

@@ -12,6 +12,12 @@ services:
       - '@SimpleMVC\Templating\Templating'
       - '@SimpleMVC\Database\Driver\DatabaseInterface'
 
+  App\Controller\AuthController:
+    arguments:
+      - '@SimpleMVC\Core\HTTP\RequestStack'
+      - '@SimpleMVC\Templating\Templating'
+      - '@SimpleMVC\Database\Driver\DatabaseInterface'
+
 # Event Listeners
   App\EventListener\LogRequestEventListener:
     arguments:

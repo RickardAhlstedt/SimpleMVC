@@ -19,6 +19,9 @@ class User extends BaseModel
     #[Column(name: 'email')]
     public string $email;
 
+    #[Column(name: 'created_at')]
+    public string $created_at;
+
     public function getId(): ?int
     {
         return $this->id ?? null;

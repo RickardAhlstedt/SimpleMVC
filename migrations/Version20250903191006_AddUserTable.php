@@ -12,7 +12,7 @@ class Version20250903191006_AddUserTable implements MigrationInterface
                 username TEXT NOT NULL UNIQUE,
                 password TEXT NOT NULL,
                 email TEXT NOT NULL UNIQUE,
-                created_at TEXT
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
         ");
     }

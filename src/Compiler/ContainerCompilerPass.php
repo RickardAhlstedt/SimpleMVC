@@ -18,8 +18,8 @@ class ContainerCompilerPass implements CompilerPassInterface
     public function process(string $cacheDir): void
     {
         $servicesFiles = [
-            $this->configDir . '/services.yaml',
             PATH_VAR_CONFIG . '/services.yaml',
+            $this->configDir . '/services.yaml',
         ];
 
         $services = [];

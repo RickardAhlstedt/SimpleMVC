@@ -27,6 +27,9 @@ class ConfigCompilerPass implements CompilerPassInterface
             if ($file === $coreConfigDir . '/routes.yaml') {
                 continue; // Skip routes file, handled separately
             }
+            if ($file === $coreConfigDir . '/services.yaml') {
+                continue; // Skip services file, handled separately
+            }
             $name = basename($file, '.yaml');
             $parsed = Yaml::parseFile($file);
 
@@ -37,6 +40,9 @@ class ConfigCompilerPass implements CompilerPassInterface
         foreach (glob($this->configDir . '/*.yaml') as $file) {
             if ($file === $this->configDir . '/routes.yaml') {
                 continue; // Skip routes file, handled separately
+            }
+            if ($file === $this->configDir . '/services.yaml') {
+                continue; // Skip services file, handled separately
             }
             $name = basename($file, '.yaml');
             $parsed = Yaml::parseFile($file);

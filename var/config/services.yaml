@@ -11,8 +11,10 @@ services:
 
   SimpleMVC\Event\EventDispatcher: ~
 
-  SimpleMVC\Database\Driver\DatabaseInterface: ~
-  SimpleMVC\Database\EntityManager: ~
+  SimpleMVC\Database\EntityManager:
+    arguments:
+      - '@SimpleMVC\Database\Driver\DatabaseInterface'
+
   SimpleMVC\Database\Repository: ~
   SimpleMVC\Database\Migration\Migrator:
     arguments:

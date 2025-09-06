@@ -4,9 +4,11 @@ namespace SimpleMVC\Auth;
 
 use App\Entities\User;
 use SimpleMVC\Auth\AuthInterface;
+use SimpleMVC\Core\Container;
 use SimpleMVC\Database\BaseModel;
 use SimpleMVC\Database\EntityManager;
 use SimpleMVC\Database\Repository;
+use SimpleMVC\Security\PasswordHasher;
 
 class AuthManager implements AuthInterface
 {
@@ -30,7 +32,13 @@ class AuthManager implements AuthInterface
             return false;
         }
 
-        if (!password_verify($password, $user->password)) {
+        $hasher = Container::getInstance()?->get(\SimpleMVC\Security\PasswordHasher::class);
+
+        if (!$hasher) {
+            return false;
+        }
+
+        if (!$hasher->verify($password, $user->password)) {
             return false;
         }
 
