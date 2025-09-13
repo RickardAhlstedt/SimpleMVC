@@ -9,3 +9,4 @@ composer.phar
 .vscode/settings.json
 /cache/
 logs/*.log
+.idea/

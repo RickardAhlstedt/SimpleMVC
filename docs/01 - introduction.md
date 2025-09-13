@@ -24,6 +24,9 @@ define('PATH_TEMPLATE', PATH_ROOT . '/templates');
 define('PATH_PUBLIC', PATH_ROOT . '/public');
 define('PATH_VENDOR', PATH_ROOT . '/vendor');
 define('PATH_LOG', PATH_ROOT . '/logs/app.log');
+define('PATH_VAR', PATH_ROOT . '/var');
+define('PATH_VAR_CONFIG', PATH_VAR . '/config');
+define('PATH_MIGRATIONS', PATH_ROOT . '/migrations');
 ```
 
 ### 2. Environment Loading

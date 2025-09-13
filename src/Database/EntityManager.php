@@ -31,4 +31,9 @@ class EntityManager
         $repo->delete($entity);
     }
 
+    public function getQueryBuilder(string $entityClass): QueryBuilder
+    {
+        return new QueryBuilder($this->driver, $entityClass);
+    }
+
 }

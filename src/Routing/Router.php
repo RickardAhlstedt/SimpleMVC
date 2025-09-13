@@ -23,21 +23,63 @@ class Router
 
     public function match(string $path, string $method = 'GET'): ?array
     {
+        // Helper closure to convert route path with placeholders to regex
+        $compilePathToRegex = function ($route) {
+            $pattern = preg_replace_callback(
+                '/\{([a-zA-Z_][a-zA-Z0-9_]*)\}/',
+                static function ($matches) use ($route) {
+                    $param = $matches[1];
+                    if (isset($route['requirements'][$param])) {
+                        $regex = $route['requirements'][$param];
+                    } else {
+                        $regex = '[^/]+';
+                    }
+                    return '(?P<' . $param . '>' . $regex . ')';
+                },
+                $route['path']
+            );
+            return '#^' . $pattern . '$#';
+        };
+
         // 1. Compiled routes
         foreach ($this->compiledRoutes as $route) {
-            if ($route['path'] === $path && strtoupper($route['method']) === strtoupper($method)) {
+            $regex = $compilePathToRegex($route);
+            if (preg_match($regex, $path, $matches) && strtoupper($route['method']) === strtoupper($method)) {
+                $params = [];
+                foreach ($matches as $key => $value) {
+                    if (!is_int($key)) {
+                        $params[$key] = $value;
+                    }
+                }
+                $route['parameters'] = $params;
                 return $route;
             }
         }
         // 2. Database routes
         foreach ($this->dbRoutes as $route) {
-            if ($route['path'] === $path && strtoupper($route['method']) === strtoupper($method)) {
+            $regex = $compilePathToRegex($route);
+            if (preg_match($regex, $path, $matches) && strtoupper($route['method']) === strtoupper($method)) {
+                $params = [];
+                foreach ($matches as $key => $value) {
+                    if (!is_int($key)) {
+                        $params[$key] = $value;
+                    }
+                }
+                $route['parameters'] = $params;
                 return $route;
             }
         }
         // 3. Controller-searching (discovered routes)
         foreach ($this->discoveredRoutes as $route) {
-            if ($route['path'] === $path && strtoupper($route['method']) === strtoupper($method)) {
+            $regex = $compilePathToRegex($route);
+            if (preg_match($regex, $path, $matches) && strtoupper($route['method']) === strtoupper($method)) {
+                $params = [];
+                foreach ($matches as $key => $value) {
+                    if (!is_int($key)) {
+                        $params[$key] = $value;
+                    }
+                }
+                $route['parameters'] = $params;
                 return $route;
             }
         }

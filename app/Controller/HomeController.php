@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entities\User;
 use SimpleMVC\Attribute\Controller;
 use SimpleMVC\Attribute\Route;
 use SimpleMVC\Core\Container;
@@ -38,9 +39,22 @@ class HomeController extends \SimpleMVC\Core\HTTP\AbstractController
         // var_dump($fetched);
         // echo '</pre>';
 
-        $queue = Container::getInstance()?->get(\SimpleMVC\Queue\DatabaseQueueDriver::class);
-        $queue->dispatch('TestJob', [$request]);
+//        $queue = Container::getInstance()?->get(\SimpleMVC\Queue\DatabaseQueueDriver::class);
+//        $queue->dispatch('TestJob', [$request]);
 
         return new Response($this->render('home.html.twig', ['name' => 'World']), 200);
     }
+
+    #[Route(
+        name: 'user_test',
+        path: '/user/{user}',
+        method: 'GET',
+        requirements: ['user' => '\d+'],
+        converters: ['user' => \App\Entities\User::class]
+    )]
+    public function userShow(User $user, RequestStack $request) : Response
+    {
+        return new Response($this->render('home.html.twig', ['name' => $user->username]), 200);
+    }
+
 }

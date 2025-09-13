@@ -18,5 +18,8 @@
         "twig/twig": "^3.21",
         "ext-pdo": "*",
         "ext-redis": "*"
+    },
+    "require-dev": {
+        "filp/whoops": "^2.18"
     }
 }

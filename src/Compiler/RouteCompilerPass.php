@@ -50,6 +50,8 @@ class RouteCompilerPass implements CompilerPassInterface
                 'controller' => $route['controller'],
                 'action' => $route['action'],
                 'middleware' => $route['middleware'] ?? null,
+                'requirements' => $route['requirements'] ?? [],
+                'converters' => $route['converters'] ?? []
             ];
         }
 

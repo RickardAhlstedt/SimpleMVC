@@ -51,6 +51,8 @@ class RouteDiscovery
                             'action' => $method->getName(),
                             'options' => $route->options,
                             'middleware' => $route->middleware,
+                            'requirements' => $route->requirements,
+                            'converters' => $route->converters,
                         ];
                     }
                 }

@@ -12,13 +12,25 @@ class Route
     public string $method;
     public array $options;
     public string $middleware;
+    public array $requirements;
+    public array $converters;
 
-    public function __construct(string $name, string $path, string $method = 'GET', array $options = [], string $middleware = "")
+    public function __construct(
+        string $name,
+        string $path,
+        string $method = 'GET',
+        array $options = [],
+        string $middleware = "",
+        array $requirements = [],
+        array $converters = []
+    )
     {
         $this->name = $name;
         $this->path = $path;
         $this->method = strtoupper($method);
         $this->options = $options;
         $this->middleware = $middleware;
+        $this->requirements = $requirements;
+        $this->converters = $converters;
     }
 }

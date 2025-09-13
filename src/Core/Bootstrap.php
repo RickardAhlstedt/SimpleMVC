@@ -151,6 +151,32 @@ class Bootstrap
 
         $container->set(\SimpleMVC\Queue\JobRegistry::class, fn() => $jobRegistry);
 
+        // Register route-resolvers
+        $resolverRegistry = new \SimpleMVC\Routing\RouteParamResolverRegistry();
+
+        foreach ([
+            PATH_APP . '/Resolver',
+            PATH_CORE . '/Resolver'] as $resolverDir) {
+            if (!is_dir($resolverDir)) {
+                continue;
+            }
+
+            foreach (glob($resolverDir . '/*.php') as $file) {
+                $basename = basename($file, '.php');
+                if (str_contains($resolverDir, 'app')) {
+                    $fqcn = 'App\\Resolver\\' . $basename;
+                } else {
+                    $fqcn = 'SimpleMVC\\Resolver\\' . $basename;
+                }
+                if (class_exists($fqcn) && is_subclass_of($fqcn, \SimpleMVC\Routing\RouteParamResolverInterface::class)) {
+                    $resolver = new $fqcn();
+                    $resolverRegistry->addResolver($resolver);
+                    $container->set($fqcn, fn() => $resolver);
+                }
+            }
+        }
+        $container->set(\SimpleMVC\Routing\RouteParamResolverRegistry::class, fn() => $resolverRegistry);
+
         $dispatcher = $container->get(\SimpleMVC\Event\EventDispatcher::class);
         foreach ($serviceDefs as $id => $_) {
             if (method_exists($id, 'getSubscribedEvents')) {

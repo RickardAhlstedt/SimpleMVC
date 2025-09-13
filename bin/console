@@ -18,8 +18,13 @@ define('PATH_MIGRATIONS', PATH_ROOT . '/migrations');
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use SimpleMVC\CLI\BaseCommand;
 use SimpleMVC\Core\Bootstrap;
 use SimpleMVC\Discovery\CommandDiscovery;
+
+$handler = new \Whoops\Handler\PlainTextHandler();
+$whoops = new \Whoops\Run();
+$whoops->pushHandler($handler);
 
 // Load extra commands from config cache
 $extraCommands = CommandDiscovery::discover(__DIR__ . '/../src/CLI');
@@ -28,6 +33,9 @@ $extraCommands = CommandDiscovery::discover(__DIR__ . '/../src/CLI');
 $commands = CommandDiscovery::discover(__DIR__ . '/../app/Command');
 
 $commands = array_merge($commands, $extraCommands);
+
+// Sort the commands by name
+usort($commands, static fn($a, $b) => strcmp($a['name'], $b['name']));
 
 // Build a map: command name => class
 $commandMap = [];
@@ -53,7 +61,7 @@ $container = Bootstrap::buildContainer(PATH_CACHE);
 
 // Instantiate and run the command
 $cmdClass = $commandMap[$commandName]['class'];
-/** @var \SimpleMVC\CLI\BaseCommand $command */
+/** @var BaseCommand $command */
 $command = new $cmdClass($container);
 
 if (in_array('--help', $args, true)) {

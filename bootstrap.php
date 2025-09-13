@@ -20,5 +20,11 @@ use SimpleMVC\Core\Application;
 
 \SimpleMVC\Core\Env::load();
 
+if ($_ENV['APP_ENV'] === 'dev' || $_ENV['APP_ENV'] === 'test' || $_ENV['APP_ENV'] === 'local') {
+    $whoops = new \Whoops\Run;
+    $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+    $whoops->register();
+}
+
 $app = new Application(PATH_CONFIG, PATH_CACHE);
 $app->run();

@@ -93,6 +93,8 @@ class Templating
                 }
             }
         }
+        // Register CSRF token as a global
+        $this->twig->addGlobal('csrf_token', \SimpleMVC\Security\CSRF::getToken());
     }
 
     public function render(string $template, array $params = []): string

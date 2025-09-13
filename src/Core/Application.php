@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SimpleMVC\Core;
 
+use ReflectionException;
 use SimpleMVC\Compiler\Compiler;
 use SimpleMVC\Compiler\ConfigCompilerPass;
 use SimpleMVC\Compiler\ContainerCompilerPass;
@@ -49,7 +50,11 @@ class Application
 
     }
 
-    private function routeApplication() {
+    /**
+     * @throws ReflectionException
+     */
+    private function routeApplication(): void
+    {
         $compiledRoutes = file_exists($this->cacheDir . '/routes.php') ? require $this->cacheDir . '/routes.php' : [];
         $dbRoutes = []; // Load from DB if needed
         $discoveredRoutes = []; // Use RouteDiscovery::discover()
@@ -85,17 +90,21 @@ class Application
                 $this->dispatch('application.middleware_end', ['middleware' => $middlewareClass, 'route' => $route]);
             }
 
-            $controller = \SimpleMVC\Core\Container::getInstance()->get($route['controller']);
+            $controller = \SimpleMVC\Core\Container::getInstance()?->get($route['controller']);
             $action = $route['action'];
+            $resolverRegistry = \SimpleMVC\Core\Container::getInstance()?->get(\SimpleMVC\Routing\RouteParamResolverRegistry::class);
 
             $reflection = new \ReflectionMethod($controller, $action);
             $parameters = [];
             foreach ($reflection->getParameters() as $param) {
+                $paramName = $param->getName();
                 $type = $param->getType();
-                if ($type && !$type->isBuiltin()) {
-                    $service = \SimpleMVC\Core\Container::getInstance()->get($type->getName());
+                if (isset($route['parameters'][$paramName])) {
+                    $parameters[] = $resolverRegistry->resolve($paramName, $route['parameters'][$paramName], $param, \SimpleMVC\Core\Container::getInstance());
+                } elseif ($type && !$type->isBuiltin()) {
+                    $service = \SimpleMVC\Core\Container::getInstance()?->get($type->getName());
                     // If it's a RequestStack, re-populate with current data
-                    if ($service instanceof \SimpleMVC\Core\RequestStack) {
+                    if ($service instanceof \SimpleMVC\Core\HTTP\RequestStack) {
                         $service->populateFromGlobals();
                     }
                     $parameters[] = $service;
@@ -129,6 +138,9 @@ class Application
         $dispatcher->dispatch(new Event($name, $data));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function run(): void
     {
         $this->compileIfNeeded();
