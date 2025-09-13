@@ -4,8 +4,7 @@ namespace SimpleMVC\Queue;
 
 interface QueueInterface
 {
-
-    public function dispatch(string $name, array $payload = [], int $delay = 0) : bool;
+    public function dispatch(string $name, array $payload = [], int $delay = 0): bool;
 
     public function reserve(): ?array;
 

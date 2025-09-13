@@ -8,7 +8,7 @@ interface CompilerPassInterface
 {
     /**
      * Process and compile data for caching.
-     * 
+     *
      * @param string $cacheDir Directory to write cache files.
      * @return void
      */

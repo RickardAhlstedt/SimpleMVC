@@ -7,11 +7,10 @@ use SimpleMVC\Database\Driver\DatabaseInterface;
 
 class DatabaseQueueDriver implements QueueInterface
 {
-
     public function __construct(
         private DatabaseInterface $database
-    )
-    {}
+    ) {
+    }
 
     /**
      * @throws JsonException

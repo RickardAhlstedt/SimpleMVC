@@ -6,7 +6,6 @@ use SimpleMVC\Core\Config;
 
 class PasswordHasher
 {
-
     private string $algo;
     private array $options;
     private string $pepper;

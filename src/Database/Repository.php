@@ -77,7 +77,7 @@ class Repository
         $stmt = $this->driver->query("SELECT * FROM {$this->table}");
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        return array_map(fn($row) => $this->mapToEntity($row), $rows);
+        return array_map(fn ($row) => $this->mapToEntity($row), $rows);
     }
 
     public function save(object $entity): void
@@ -98,14 +98,14 @@ class Repository
         if ($primaryKeyValue) {
             // update
             $fields = array_keys($data);
-            $updates = implode(', ', array_map(fn($f) => "$f = :$f", $fields));
+            $updates = implode(', ', array_map(fn ($f) => "$f = :$f", $fields));
             $sql = "UPDATE {$this->table} SET $updates WHERE {$this->primaryKeyColumn} = :{$this->primaryKeyColumn}";
             $this->driver->query($sql, $data);
         } else {
             // insert
             $fields = array_keys($data);
             $columns = implode(', ', $fields);
-            $placeholders = implode(', ', array_map(fn($f) => ":$f", $fields));
+            $placeholders = implode(', ', array_map(fn ($f) => ":$f", $fields));
             $sql = "INSERT INTO {$this->table} ($columns) VALUES ($placeholders)";
             $this->driver->query($sql, $data);
 

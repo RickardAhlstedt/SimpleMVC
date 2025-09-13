@@ -27,7 +27,7 @@ class Bootstrap
         if (!empty(Config::getInstance()->get('database'))) {
             $dbConfig = Config::getInstance()->get('database');
 
-            switch($dbConfig['driver']) {
+            switch ($dbConfig['driver']) {
                 case 'sqlite':
                     if (isset($dbConfig['path']) && $dbConfig['path'] !== ':memory:') {
                         $dir = dirname($dbConfig['path']);
@@ -42,13 +42,13 @@ class Bootstrap
                     }
                     $driver = new \SimpleMVC\Database\Driver\Sqlite\SqliteDatabaseDriver();
                     $driver->connect($dbConfig);
-                    $container->set(\SimpleMVC\Database\Driver\DatabaseInterface::class, fn() => $driver);
+                    $container->set(\SimpleMVC\Database\Driver\DatabaseInterface::class, fn () => $driver);
                     break;
-                // Add other drivers here (e.g. MySQL, PostgreSQL)
+                    // Add other drivers here (e.g. MySQL, PostgreSQL)
                 case 'pdo':
                     $driver = new \SimpleMVC\Database\Driver\Pdo\PdoDatabaseDriver();
                     $driver->connect($dbConfig);
-                    $container->set(\SimpleMVC\Database\Driver\DatabaseInterface::class, fn() => $driver);
+                    $container->set(\SimpleMVC\Database\Driver\DatabaseInterface::class, fn () => $driver);
                     break;
                 default:
                     throw new \RuntimeException('Unsupported database driver: ' . $dbConfig['driver']);
@@ -66,12 +66,12 @@ class Bootstrap
                         throw new \RuntimeException(sprintf('Cache directory "%s" was not created', $cachePath));
                     }
                     $cacheDriver = new \SimpleMVC\Cache\FileCache($cachePath);
-                    $container->set(\SimpleMVC\Cache\CacheInterface::class, fn() => $cacheDriver);
+                    $container->set(\SimpleMVC\Cache\CacheInterface::class, fn () => $cacheDriver);
                     break;
                 case 'database':
                     $dbDriver = $container->get(\SimpleMVC\Database\Driver\DatabaseInterface::class);
                     $cacheDriver = new \SimpleMVC\Cache\DatabaseCache($dbDriver);
-                    $container->set(\SimpleMVC\Cache\CacheInterface::class, fn() => $cacheDriver);
+                    $container->set(\SimpleMVC\Cache\CacheInterface::class, fn () => $cacheDriver);
                     break;
                 case 'redis':
                     $host = $cacheConfig['host'] ?? '127.0.0.1';
@@ -79,7 +79,7 @@ class Bootstrap
                     $redis = new \Redis();
                     $redis->connect($host, $port);
                     $cacheDriver = new \SimpleMVC\Cache\RedisCache($redis);
-                    $container->set(\SimpleMVC\Cache\CacheInterface::class, fn() => $cacheDriver);
+                    $container->set(\SimpleMVC\Cache\CacheInterface::class, fn () => $cacheDriver);
                     break;
                 default:
                     throw new \RuntimeException('Unsupported cache driver: ' . $cacheConfig['driver']);
@@ -87,7 +87,7 @@ class Bootstrap
         }
 
         foreach ($serviceDefs as $id => $definition) {
-            $container->set($id, function($c) use ($id, $definition, $vars) {
+            $container->set($id, function ($c) use ($id, $definition, $vars) {
                 $args = [];
                 foreach ($definition['arguments'] ?? [] as $arg) {
                     if (is_string($arg) && str_starts_with($arg, '@')) {
@@ -144,12 +144,12 @@ class Bootstrap
                 if (class_exists($fqcn) && in_array(JobInterface::class, class_implements($fqcn), true)) {
                     $jobRegistry->register($className, $fqcn);
                     $jobClass = new $fqcn();
-                    $container->set($fqcn, fn() => $jobClass);
+                    $container->set($fqcn, fn () => $jobClass);
                 }
             }
         }
 
-        $container->set(\SimpleMVC\Queue\JobRegistry::class, fn() => $jobRegistry);
+        $container->set(\SimpleMVC\Queue\JobRegistry::class, fn () => $jobRegistry);
 
         // Register route-resolvers
         $resolverRegistry = new \SimpleMVC\Routing\RouteParamResolverRegistry();
@@ -171,11 +171,11 @@ class Bootstrap
                 if (class_exists($fqcn) && is_subclass_of($fqcn, \SimpleMVC\Routing\RouteParamResolverInterface::class)) {
                     $resolver = new $fqcn();
                     $resolverRegistry->addResolver($resolver);
-                    $container->set($fqcn, fn() => $resolver);
+                    $container->set($fqcn, fn () => $resolver);
                 }
             }
         }
-        $container->set(\SimpleMVC\Routing\RouteParamResolverRegistry::class, fn() => $resolverRegistry);
+        $container->set(\SimpleMVC\Routing\RouteParamResolverRegistry::class, fn () => $resolverRegistry);
 
         $dispatcher = $container->get(\SimpleMVC\Event\EventDispatcher::class);
         foreach ($serviceDefs as $id => $_) {

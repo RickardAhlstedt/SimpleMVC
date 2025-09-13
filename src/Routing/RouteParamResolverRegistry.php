@@ -6,7 +6,6 @@ use SimpleMVC\Core\Container;
 
 class RouteParamResolverRegistry
 {
-
     /** @var RouteParamResolverInterface[] */
     private array $resolvers = [];
 

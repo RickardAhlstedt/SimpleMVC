@@ -12,7 +12,7 @@ abstract class AbstractController
     {
         // Initialize templating service if needed
         $this->templating = $templating;
-        
+
         // Set the request stack
         $this->setRequestStack($requestStack);
 
@@ -38,6 +38,6 @@ abstract class AbstractController
      */
     protected function setRequestStack(RequestStack $requestStack): void
     {
-        $this->requestStack = $requestStack;    
+        $this->requestStack = $requestStack;
     }
 }

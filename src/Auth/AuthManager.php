@@ -12,7 +12,6 @@ use SimpleMVC\Security\PasswordHasher;
 
 class AuthManager implements AuthInterface
 {
-
     private Repository $userRepository;
     private ?BaseModel $currentUser = null;
 

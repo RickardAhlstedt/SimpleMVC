@@ -2,8 +2,8 @@
 
 namespace SimpleMVC\Database;
 
-class QueryBuilder {
-
+class QueryBuilder
+{
     private DatabaseInterface $driver;
     private string $entityClass;
     private string $table;
@@ -18,19 +18,22 @@ class QueryBuilder {
     private ?array $customConditions = null;
     private ?string $locale = null;
 
-    public function __construct(DatabaseInterface $driver, string $entityClass) {
+    public function __construct(DatabaseInterface $driver, string $entityClass)
+    {
         $this->driver = $driver;
         $this->entityClass = $entityClass;
         $table = strtolower((new \ReflectionClass($entityClass))->getShortName()) . 's';
         $this->table = $table;
     }
 
-    public function setColumns (array $columns): self {
+    public function setColumns(array $columns): self
+    {
         $this->select = $columns;
         return $this;
     }
 
-    public function addConditionWhere(array $criteria): self {
+    public function addConditionWhere(array $criteria): self
+    {
         $this->criteria = array_merge($this->criteria, $criteria);
         return $this;
     }
@@ -45,32 +48,38 @@ class QueryBuilder {
         return $this;
     }
 
-    public function setLimit(int $limit): self {
+    public function setLimit(int $limit): self
+    {
         $this->limit = $limit;
         return $this;
     }
 
-    public function setOffset(int $offset): self {
+    public function setOffset(int $offset): self
+    {
         $this->offset = $offset;
         return $this;
     }
 
-    public function setOrderBy(array $orderBy): self {
+    public function setOrderBy(array $orderBy): self
+    {
         $this->orderBy = array_merge($this->orderBy, $orderBy);
         return $this;
     }
 
-    public function setGroupBy(string $groupBy): self {
+    public function setGroupBy(string $groupBy): self
+    {
         $this->groupBy = $groupBy;
         return $this;
     }
 
-    public function addJoin(string $table, string $on, string $type = 'INNER'): self {
+    public function addJoin(string $table, string $on, string $type = 'INNER'): self
+    {
         $this->joins[] = [$type, $table, $on];
         return $this;
     }
 
-    public function setHaving(string $having): self {
+    public function setHaving(string $having): self
+    {
         $this->having = $having;
         return $this;
     }
@@ -113,7 +122,7 @@ class QueryBuilder {
             $sql .= " WHERE " . implode(' AND ', $where);
         }
         if ($this->orderBy) {
-            $orders = array_map(fn($o) => "{$o[0]} {$o[1]}", $this->orderBy);
+            $orders = array_map(fn ($o) => "{$o[0]} {$o[1]}", $this->orderBy);
             $sql .= " ORDER BY " . implode(', ', $orders);
         }
         if ($this->limit !== null) {
@@ -135,7 +144,7 @@ class QueryBuilder {
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         // Map to entities
-        return array_map(fn($row) => $this->mapToEntity($row), $rows);
+        return array_map(fn ($row) => $this->mapToEntity($row), $rows);
     }
 
     public function current(): ?object

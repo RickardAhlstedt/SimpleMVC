@@ -23,8 +23,7 @@ class Route
         string $middleware = "",
         array $requirements = [],
         array $converters = []
-    )
-    {
+    ) {
         $this->name = $name;
         $this->path = $path;
         $this->method = strtoupper($method);

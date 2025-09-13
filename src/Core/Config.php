@@ -11,7 +11,7 @@ class Config
     private array $config = [];
     private static ?Config $instance = null;
 
-    private array $envVars = [];    
+    private array $envVars = [];
 
     public static function getInstance(): Config
     {

@@ -10,7 +10,8 @@ abstract class BaseCommand
 {
     public function __construct(
         protected Container $container
-    ) {}
+    ) {
+    }
 
     /**
      * Execute the command.

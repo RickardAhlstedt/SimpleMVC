@@ -6,7 +6,6 @@ use SimpleMVC\Core\Container;
 
 class JobRegistry
 {
-
     private array $map = [];
 
     private Container $container;

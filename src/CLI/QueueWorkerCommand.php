@@ -8,7 +8,6 @@ use SimpleMVC\Queue\QueueInterface;
 #[Command('queue:work', 'Process jobs from the queue')]
 class QueueWorkerCommand extends BaseCommand
 {
-
     /**
      * @inheritDoc
      */
@@ -18,7 +17,7 @@ class QueueWorkerCommand extends BaseCommand
         $registry = $this->container->get(\SimpleMVC\Queue\JobRegistry::class);
 
         echo "Starting worker...\n";
-        while(true) {
+        while (true) {
             $job = $queue->reserve();
             if ($job) {
                 echo sprintf("[%s] Processing job #%s:%s\n", date("Y-m-d H:i:s"), $job['id'], $job['name']);

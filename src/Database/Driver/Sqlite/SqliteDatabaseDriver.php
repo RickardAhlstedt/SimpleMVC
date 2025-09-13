@@ -4,7 +4,6 @@ namespace SimpleMVC\Database\Driver\Sqlite;
 
 use PDO;
 use PDOException;
-
 use SimpleMVC\Database\Driver\DatabaseInterface;
 
 class SqliteDatabaseDriver implements DatabaseInterface

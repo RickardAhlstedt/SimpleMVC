@@ -9,5 +9,6 @@ class Column
         public string $name,
         public bool $primary = false,
         public bool $autoIncrement = false
-    ) {}
+    ) {
+    }
 }

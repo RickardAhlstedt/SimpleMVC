@@ -9,7 +9,6 @@ use SimpleMVC\Database\Migration\Migrator;
 #[Command('migrate:rollback', 'Rollback the latest applied migration')]
 class RollbackDatabaseCommand extends BaseCommand
 {
-
     /**
      * @throws ReflectionException
      */

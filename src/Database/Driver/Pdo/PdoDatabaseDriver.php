@@ -4,7 +4,6 @@ namespace SimpleMVC\Database\Driver\Pdo;
 
 use PDO;
 use PDOException;
-
 use SimpleMVC\Database\Driver\DatabaseInterface;
 
 class PdoDatabaseDriver implements DatabaseInterface

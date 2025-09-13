@@ -7,5 +7,7 @@ namespace SimpleMVC\Attribute;
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class Controller
 {
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 }
