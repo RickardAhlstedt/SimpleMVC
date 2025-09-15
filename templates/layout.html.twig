@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}SimpleMVC{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ webpack('main.css') }}">
+    {% endblock %}
+</head>
+<body>
+    <header>
+        <h1>{% block header %}Welcome to SimpleMVC{% endblock %}</h1>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        {% block footer %}© {{ "now"|date("Y") }} SimpleMVC{% endblock %}
+    </footer>
+    {% block javascripts %}
+        <script src="{{ webpack('main.js') }}"></script>
+    {% endblock %}
+</body>
+</html>

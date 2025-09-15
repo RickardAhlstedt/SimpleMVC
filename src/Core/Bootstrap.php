@@ -176,7 +176,6 @@ class Bootstrap
             }
         }
         $container->set(\SimpleMVC\Routing\RouteParamResolverRegistry::class, fn () => $resolverRegistry);
-
         $dispatcher = $container->get(\SimpleMVC\Event\EventDispatcher::class);
         foreach ($serviceDefs as $id => $_) {
             if (method_exists($id, 'getSubscribedEvents')) {

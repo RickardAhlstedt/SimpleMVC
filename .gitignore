@@ -10,3 +10,13 @@ composer.phar
 /cache/
 logs/*.log
 .idea/
+
+### Node ###
+node_modules/
+.DS_Store
+npm-debug.log*
+
+### Compiled files ###
+/public/assets/*
+
+.php-cs-fixer.cache

@@ -1,1 +1,10 @@
-<h1>Hello, {{ name }}!</h1>
+{% extends "layout.html.twig" %}
+
+{% block title %}Home - SimpleMVC{% endblock %}
+
+{% block header %}Welcome to the Home Page{% endblock %}
+
+{% block content %}
+    <p>This is the home page of the SimpleMVC application.</p>
+    <p>{{ name }}</p>
+{% endblock %}

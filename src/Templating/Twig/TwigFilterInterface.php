@@ -6,5 +6,5 @@ use Twig\TwigFilter;
 
 interface TwigFilterInterface
 {
-    public function getFilter(): TwigFilter;
+    public function getFilters(): array;
 }

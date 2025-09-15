@@ -6,5 +6,5 @@ use Twig\TwigFunction;
 
 interface TwigFunctionInterface
 {
-    public function getFunction(): TwigFunction;
+    public function getFunctions(): array;
 }

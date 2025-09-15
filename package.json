@@ -1,0 +1,39 @@
+{
+  "name": "simplemvc",
+  "version": "1.0.0",
+  "description": "A lightweight MVC framework with a focus on simplicity, performance, and extensibility.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode production",
+    "build-dev": "webpack --mode development",
+    "start": "webpack --mode development --watch",
+    "dev": "webpack serve --mode development --open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RickardAhlstedt/SimpleMVC.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/RickardAhlstedt/SimpleMVC/issues"
+  },
+  "homepage": "https://github.com/RickardAhlstedt/SimpleMVC#readme",
+  "devDependencies": {
+    "css-loader": "^7.1.2",
+    "mini-css-extract-plugin": "^2.9.4",
+    "sass": "^1.92.1",
+    "sass-loader": "^16.0.5",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1",
+    "webpack-manifest-plugin": "^5.0.1"
+  }
+}

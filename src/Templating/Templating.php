@@ -18,21 +18,29 @@ class Templating
         if ($cacheDir) {
             $options['cache'] = $cacheDir;
         }
-        $this->twig = new Environment($loader, $options);
 
+        $this->twig = new Environment($loader, $options);
         $this->registerTwigExtensions();
+
     }
 
     private function registerTwigExtensions(): void
     {
+
         // Register custom functions
-        $functionClasses = glob(__DIR__ . '/Twig/Functions/*.php');
+        $functionClasses = glob(PATH_CORE . '/Twig/Functions/*.php');
         foreach ($functionClasses as $file) {
             $className = 'SimpleMVC\\Twig\\Functions\\' . basename($file, '.php');
             if (class_exists($className)) {
                 $instance = new $className();
                 if ($instance instanceof \SimpleMVC\Templating\Twig\TwigFunctionInterface) {
-                    $this->twig->addFunction($instance->getFunction());
+                    if (method_exists($instance, 'getFunctions')) {
+                        foreach ($instance->getFunctions() as $function) {
+                            $this->twig->addFunction($function);
+                        }
+                    } else {
+                        $this->twig->addFunction($instance->getFunction());
+                    }
                 }
             }
         }
@@ -43,19 +51,31 @@ class Templating
             if (class_exists($className)) {
                 $instance = new $className();
                 if ($instance instanceof \SimpleMVC\Templating\Twig\TwigFunctionInterface) {
-                    $this->twig->addFunction($instance->getFunction());
+                    if (method_exists($instance, 'getFunctions')) {
+                        foreach ($instance->getFunctions() as $function) {
+                            $this->twig->addFunction($function);
+                        }
+                    } else {
+                        $this->twig->addFunction($instance->getFunction());
+                    }
                 }
             }
         }
 
         // Register custom filters
-        $filterClasses = glob(__DIR__ . '/Twig/Filters/*.php');
+        $filterClasses = glob(PATH_CORE . '/Twig/Filters/*.php');
         foreach ($filterClasses as $file) {
             $className = 'SimpleMVC\\Twig\\Filters\\' . basename($file, '.php');
             if (class_exists($className)) {
                 $instance = new $className();
                 if ($instance instanceof \SimpleMVC\Templating\Twig\TwigFilterInterface) {
-                    $this->twig->addFilter($instance->getFilter());
+                    if (method_exists($instance, 'getFilters')) {
+                        foreach ($instance->getFilters() as $filter) {
+                            $this->twig->addFilter($filter);
+                        }
+                    } else {
+                        $this->twig->addFilter($instance->getFilter());
+                    }
                 }
             }
         }
@@ -66,13 +86,19 @@ class Templating
             if (class_exists($className)) {
                 $instance = new $className();
                 if ($instance instanceof \SimpleMVC\Templating\Twig\TwigFilterInterface) {
-                    $this->twig->addFilter($instance->getFilter());
+                    if (method_exists($instance, 'getFilters')) {
+                        foreach ($instance->getFilters() as $filter) {
+                            $this->twig->addFilter($filter);
+                        }
+                    } else {
+                        $this->twig->addFilter($instance->getFilter());
+                    }
                 }
             }
         }
 
         // Register global variables
-        $globalClasses = glob(__DIR__ . '/Twig/Globals/*.php');
+        $globalClasses = glob(PATH_CORE . '/Twig/Globals/*.php');
         foreach ($globalClasses as $file) {
             $className = 'SimpleMVC\\Twig\\Globals\\' . basename($file, '.php');
             if (class_exists($className)) {
