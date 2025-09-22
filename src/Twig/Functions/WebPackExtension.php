@@ -3,6 +3,7 @@
 namespace SimpleMVC\Twig\Functions;
 
 use SimpleMVC\Templating\Twig\TwigFunctionInterface;
+use SimpleMVC\Services\LoggerService;
 
 class WebPackExtension implements TwigFunctionInterface
 {
@@ -26,9 +27,12 @@ class WebPackExtension implements TwigFunctionInterface
         }
 
         if (!isset($manifest[$assetName])) {
-            throw new \InvalidArgumentException("Asset not found in manifest: " . $assetName);
+            if(isset($manifest['files'][$assetName])) {
+                return $manifest['files'][$assetName];
+            }
+            throw new \InvalidArgumentException("Asset not found in manifest: " . $assetName . ". Available assets: " . implode(", ", array_keys($manifest)));
         }
 
-        return '/assets' . $manifest[$assetName];
+        return $manifest[$assetName];
     }
 }

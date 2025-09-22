@@ -7,4 +7,5 @@
 {% block content %}
     <p>This is the home page of the SimpleMVC application.</p>
     <p>{{ name }}</p>
+    {{ react_component('Hello', { name: name }) }}
 {% endblock %}

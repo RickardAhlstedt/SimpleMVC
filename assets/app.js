@@ -1,7 +1,6 @@
 import './styles/app.scss';
+import { registerComponent } from './react/bootstrap';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const el = document.createElement('h1');
-  el.textContent = 'Hello from SimpleMVC + Webpack!';
-  document.body.appendChild(el);
-});
+import Hello from './react/components/Hello.jsx';
+
+registerComponent('Hello', Hello);
