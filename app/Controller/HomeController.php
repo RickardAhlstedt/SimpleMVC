@@ -26,8 +26,8 @@ class HomeController extends \SimpleMVC\Core\HTTP\AbstractController
     public function index(RequestStack $request) : Response
     {
         // echo '<pre>';
-        // $em = new EntityManager($this->database);
-        // $userRepo = $em->getRepository(\App\Entities\User::class);
+        $em = new EntityManager($this->database);
+        $userRepo = $em->getRepository(\App\Entities\User::class);
 
         // $newUser = new \App\Entities\User();
         // $newUser->username = 'johndoe';
@@ -42,7 +42,14 @@ class HomeController extends \SimpleMVC\Core\HTTP\AbstractController
 //        $queue = Container::getInstance()?->get(\SimpleMVC\Queue\DatabaseQueueDriver::class);
 //        $queue->dispatch('TestJob', [$request]);
 
-        return new Response($this->render('home.html.twig', ['name' => 'World']), 200);
+        $workflowManager = Container::getInstance()?->get(\SimpleMVC\Workflow\WorkflowManager::class);
+        $workflowManager->addWorkflow(new \App\Workflow\ExampleWorkflow());
+
+        $user = $userRepo->find(1);
+
+        $currentState = $workflowManager->getCurrentState($user);
+
+        return new Response($this->render('home.html.twig', ['name' => 'World', 'user' => $user]), 200);
     }
 
     #[Route(

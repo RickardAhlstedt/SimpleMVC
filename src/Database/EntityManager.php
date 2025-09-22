@@ -13,6 +13,11 @@ class EntityManager
         $this->driver = $driver;
     }
 
+    public function getDriver(): DatabaseInterface
+    {
+        return $this->driver;
+    }
+
     public function getRepository(string $entityClass): Repository
     {
         return new Repository($this->driver, $entityClass);

@@ -15,6 +15,10 @@ services:
     arguments:
       - '@SimpleMVC\Database\Driver\DatabaseInterface'
 
+  SimpleMVC\Workflow\WorkflowManager:
+    arguments:
+      - '@SimpleMVC\Database\EntityManager'
+
   SimpleMVC\Database\Repository: ~
   SimpleMVC\Database\Migration\Migrator:
     arguments:

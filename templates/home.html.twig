@@ -8,4 +8,15 @@
     <p>This is the home page of the SimpleMVC application.</p>
     <p>{{ name }}</p>
     {{ react_component('Hello', { name: name }) }}
+    {{ workflow_can(user, 'submit_review') ? 'User can submit review' : 'User cannot submit review' }}
+
+    <p>Current status: {{ workflow_state(user) }}</p>
+
+    {% if workflow_can(user, 'submit_review') %}
+        <button>Submit for Review</button>
+    {% endif %}
+
+    {% if workflow_can(user, 'approve') %}
+        <button>Approve</button>
+    {% endif %}
 {% endblock %}

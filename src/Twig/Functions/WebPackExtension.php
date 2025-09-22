@@ -3,7 +3,6 @@
 namespace SimpleMVC\Twig\Functions;
 
 use SimpleMVC\Templating\Twig\TwigFunctionInterface;
-use SimpleMVC\Services\LoggerService;
 
 class WebPackExtension implements TwigFunctionInterface
 {

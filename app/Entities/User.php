@@ -5,9 +5,10 @@ use SimpleMVC\Attributes\Database\Column;
 use SimpleMVC\Attributes\Database\Table;
 use SimpleMVC\Database\BaseModel;
 
+use SimpleMVC\Workflow\WorkflowAwareInterface;
 
 #[Table(name: 'users')]
-class User extends BaseModel
+class User extends BaseModel implements WorkflowAwareInterface
 {
 
     #[Column(name: 'username')]
@@ -25,6 +26,11 @@ class User extends BaseModel
     public function getId(): ?int
     {
         return $this->id ?? null;
+    }
+
+    public function getWorkflowName(): string
+    {
+        return 'example_workflow';
     }
 
 }
