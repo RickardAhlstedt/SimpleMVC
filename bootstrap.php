@@ -26,6 +26,7 @@ if ($_ENV['APP_ENV'] === 'dev' || $_ENV['APP_ENV'] === 'test' || $_ENV['APP_ENV'
         $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
         $whoops->register();
     }
+    define('APP_START_TIME', microtime(true));
 }
 
 $app = new Application(PATH_CONFIG, PATH_CACHE);

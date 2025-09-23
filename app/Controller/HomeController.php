@@ -43,7 +43,6 @@ class HomeController extends \SimpleMVC\Core\HTTP\AbstractController
 //        $queue->dispatch('TestJob', [$request]);
 
         $workflowManager = Container::getInstance()?->get(\SimpleMVC\Workflow\WorkflowManager::class);
-        $workflowManager->addWorkflow(new \App\Workflow\ExampleWorkflow());
 
         $user = $userRepo->find(1);
 

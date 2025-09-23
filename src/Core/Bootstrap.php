@@ -151,6 +151,39 @@ class Bootstrap
 
         $container->set(\SimpleMVC\Queue\JobRegistry::class, fn () => $jobRegistry);
 
+        // Register workflows
+        $workflowManager = $container?->get(\SimpleMVC\Workflow\WorkflowManager::class);
+        $workflowDir = rtrim(defined('PATH_APP') ? PATH_APP : '', '/') . '/Workflow';
+        if (is_dir($workflowDir)) {
+            $files = scandir($workflowDir);
+            if ($files !== false) {
+                foreach ($files as $file) {
+                    if (pathinfo($file, PATHINFO_EXTENSION) !== 'php') {
+                        continue;
+                    }
+                    $filePath = $workflowDir . '/' . $file;
+                    $contents = file_get_contents($filePath);
+                    if ($contents === false) {
+                        continue;
+                    }
+                    // Extract namespace and class name
+                    $namespace = '';
+                    $className = pathinfo($file, PATHINFO_FILENAME);
+                    if (preg_match('/namespace\s+([^;]+);/', $contents, $matches)) {
+                        $namespace = trim($matches[1]);
+                    }
+                    $fqcn = $namespace ? $namespace . '\\' . $className : $className;
+                    if (!class_exists($fqcn)) {
+                        require_once $filePath;
+                    }
+                    if (class_exists($fqcn) && in_array(\SimpleMVC\Workflow\WorkflowInterface::class, class_implements($fqcn), true)) {
+                        $workflow = new $fqcn();
+                        $workflowManager->addWorkflow($workflow);
+                    }
+                }
+            }
+        }
+        $container->set(\SimpleMVC\Workflow\WorkflowManager::class, fn () => $workflowManager);
         // Register route-resolvers
         $resolverRegistry = new \SimpleMVC\Routing\RouteParamResolverRegistry();
 

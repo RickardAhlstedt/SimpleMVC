@@ -8,7 +8,7 @@
     <p>This is the home page of the SimpleMVC application.</p>
     <p>{{ name }}</p>
     {{ react_component('Hello', { name: name }) }}
-    {{ workflow_can(user, 'submit_review') ? 'User can submit review' : 'User cannot submit review' }}
+    {# {{ workflow_can(user, 'submit_review') ? 'User can submit review' : 'User cannot submit review' }}
 
     <p>Current status: {{ workflow_state(user) }}</p>
 
@@ -18,5 +18,28 @@
 
     {% if workflow_can(user, 'approve') %}
         <button>Approve</button>
-    {% endif %}
+    {% endif %} #}
+
+    {# Only shows in development mode #}
+    {{ debug_info() }}
+    
+    {# Dump variables #}
+    {{ dump(user) }}
+    
+    {# Show current route information #}
+    {{ route_info() }}
+    
+    {# Get environment variables #}
+    <p>Environment: {{ env('APP_ENV') }}</p>
+    <p>Debug: {{ env('APP_DEBUG', 'false') }}</p>
+    
+    {# Get configuration values #}
+    <p>Database: {{ config('database.driver') }}</p>
+    
+    {# Performance metrics #}
+    <p>Memory: {{ memory_usage() }}</p>
+    <p>Time: {{ execution_time() }}s</p>
+    
+    {# SQL query log (when implemented) #}
+    {{ sql_queries() }}
 {% endblock %}
