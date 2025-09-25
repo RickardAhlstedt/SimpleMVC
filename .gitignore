@@ -20,3 +20,6 @@ npm-debug.log*
 /public/assets/*
 
 .php-cs-fixer.cache
+
+### Generated files ###
+/var/debug/*

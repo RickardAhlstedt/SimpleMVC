@@ -29,7 +29,7 @@ class DebugToolbarMiddleware implements MiddlewareInterface
             return $response;
         }
 
-        $requestId = uniqid('', true);
+        $requestId = uniqid();
         $data = $this->toolbar->collect($requestId);
 
         $toolbarHtml = $this->generateToolbarHtml($data, $requestId);
