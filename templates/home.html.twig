@@ -23,8 +23,10 @@
     {# Only shows in development mode #}
     {{ debug_info() }}
     
-    {# Dump variables #}
+    Dump variables
     {{ dump(user) }}
+    {{ dump(request) }}
+    {{ dump(session) }}
     
     {# Show current route information #}
     {{ route_info() }}
@@ -40,6 +42,4 @@
     <p>Memory: {{ memory_usage() }}</p>
     <p>Time: {{ execution_time() }}s</p>
     
-    {# SQL query log (when implemented) #}
-    {{ sql_queries() }}
 {% endblock %}

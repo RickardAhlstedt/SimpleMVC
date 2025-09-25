@@ -1,0 +1,70 @@
+{# templates/debug/profiler.html.twig #}
+{% extends "debug/layout.html.twig" %}
+
+{% block content %}
+    <div class="content-header">
+        <h2>Request Overview</h2>
+        <p class="description">General information about this request and collected data.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        {% for name, collectorData in data.collectors %}
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; display: flex; align-items: center; gap: 0.5rem;">
+                    {% set collector = collectors[name] is defined ? collectors[name] : null %}
+                    {% if collector %}
+                        <span>{{ collector.icon }}</span>
+                        {{ collector.label }}
+                    {% else %}
+                        {{ name|title }}
+                    {% endif %}
+                </h3>
+                
+                {% if name == 'performance' %}
+                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                        <span>Execution Time:</span> 
+                        <strong style="color: #007bff;">{{ (collectorData.execution_time * 1000)|round(2) }}ms</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                        <span>Memory Usage:</span> 
+                        <strong style="color: #007bff;">{{ (collectorData.memory_usage / 1024 / 1024)|round(2) }}MB</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                        <span>Peak Memory:</span> 
+                        <strong style="color: #007bff;">{{ (collectorData.memory_peak / 1024 / 1024)|round(2) }}MB</strong>
+                    </div>
+                {% elseif name == 'database' %}
+                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                        <span>Queries:</span> 
+                        <strong style="color: #007bff;">{{ collectorData.query_count }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                        <span>Total Time:</span> 
+                        <strong style="color: #007bff;">{{ (collectorData.total_time * 1000)|round(2) }}ms</strong>
+                    </div>
+                {% elseif name == 'request' %}
+                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                        <span>Method:</span> 
+                        <strong style="color: #007bff;">{{ collectorData.method }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                        <span>URI:</span> 
+                        <strong style="color: #007bff;">{{ collectorData.uri }}</strong>
+                    </div>
+                {% elseif name == 'dump' %}
+                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                        <span>Dumps:</span> 
+                        <strong style="color: #007bff;">{{ collectorData.dump_count is defined ? collectorData.dump_count : 0 }}</strong>
+                    </div>
+                {% endif %}
+                
+                <div style="margin-top: 1rem;">
+                    <a href="/debug/{{ requestId }}/{{ name }}" 
+                       style="color: #007bff; text-decoration: none; font-size: 0.9rem;">
+                        View Details →
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

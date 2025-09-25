@@ -20,9 +20,10 @@ abstract class AbstractController
         $this->database = $database;
     }
 
-    public function render(string $template, array $params = []): string
+    public function render(string $template, array $params = []): Response
     {
-        return $this->templating->render($template, $params);
+        $content = $this->templating->render($template, $params);
+        return new Response($content, 200, ['Content-Type' => 'text/html; charset=utf-8']);
     }
 
     /**

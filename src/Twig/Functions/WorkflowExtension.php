@@ -6,6 +6,11 @@ use SimpleMVC\Templating\Twig\TwigFunctionInterface;
 
 class WorkflowExtension implements TwigFunctionInterface
 {
+    public function isStatic(): bool
+    {
+        return false;
+    }
+
     public function getFunctions(): array
     {
         return [

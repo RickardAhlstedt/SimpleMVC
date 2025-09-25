@@ -25,8 +25,15 @@ class SqliteDatabaseDriver implements DatabaseInterface
 
     public function query(string $sql, array $params = []): mixed
     {
+        $start = microtime(true);
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
+        $time = microtime(true) - $start;
+
+        if (class_exists(\SimpleMVC\Debug\Collector\DatabaseCollector::class)) {
+            \SimpleMVC\Debug\Collector\DatabaseCollector::logQuery($sql, $params, $time);
+        }
+        
         return $stmt;
     }
 

@@ -6,6 +6,12 @@ use SimpleMVC\Templating\Twig\TwigFunctionInterface;
 
 class WebPackExtension implements TwigFunctionInterface
 {
+
+    public function isStatic(): bool
+    {
+        return false;
+    }
+
     public function getFunctions(): array
     {
         return [

@@ -37,6 +37,7 @@ services:
     arguments:
       - '%PATH_TEMPLATE%'
       - '%PATH_CACHE%'
+      - '@SimpleMVC\Core\Container'
 
   SimpleMVC\Auth\AuthManager:
     arguments:
@@ -44,9 +45,22 @@ services:
 
   SimpleMVC\Security\PasswordHasher: ~
 
+  SimpleMVC\Debug\DebugToolbar: 
+    arguments:
+      - '%PATH_VAR%/debug'
+
+  SimpleMVC\Debug\Middleware\DebugToolbarMiddleware:
+    arguments:
+      - '@SimpleMVC\Debug\DebugToolbar'
+
   # Controllers
   SimpleMVC\Core\HTTP\AbstractController:
     arguments:
         - '@SimpleMVC\Core\HTTP\RequestStack'
         - '@SimpleMVC\Templating\Templating'
         - '@SimpleMVC\Database\Driver\DatabaseInterface'
+  SimpleMVC\Debug\Controller\DebugController:
+    arguments:
+      - '@SimpleMVC\Core\HTTP\RequestStack'
+      - '@SimpleMVC\Templating\Templating'
+      - '@SimpleMVC\Database\Driver\DatabaseInterface'

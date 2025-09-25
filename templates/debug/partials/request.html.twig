@@ -1,0 +1,118 @@
+{% extends "debug/layout.html.twig" %}
+
+{% block content %}
+    <div class="content-header">
+        <h2>🌐 Request Information</h2>
+        <p class="description">Details about the HTTP request and server environment.</p>
+    </div>
+
+    <div style="display: grid; gap: 1.5rem;">
+        <!-- Request Overview -->
+        <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">Request Overview</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f1f3f4;">
+                    <span style="font-weight: 500;">Method:</span>
+                    <strong style="color: #007bff;">{{ data.method }}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f1f3f4;">
+                    <span style="font-weight: 500;">URI:</span>
+                    <strong style="color: #007bff;">{{ data.uri }}</strong>
+                </div>
+                {% if data.query|length > 0 %}
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f1f3f4;">
+                        <span style="font-weight: 500;">Query Params:</span>
+                        <strong style="color: #007bff;">{{ data.query|length }}</strong>
+                    </div>
+                {% endif %}
+                {% if data.post|length > 0 %}
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f1f3f4;">
+                        <span style="font-weight: 500;">POST Params:</span>
+                        <strong style="color: #007bff;">{{ data.post|length }}</strong>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Query Parameters -->
+        {% if data.query|length > 0 %}
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">Query Parameters</h3>
+                
+                <div style="font-family: monospace; font-size: 12px;">
+                    {% for key, value in data.query %}
+                        <div style="display: flex; padding: 0.5rem; border-bottom: 1px solid #f1f3f4;">
+                            <span style="width: 150px; color: #6c757d; font-weight: bold;">{{ key }}:</span>
+                            <span style="flex: 1; word-break: break-all;">{{ value }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- POST Parameters -->
+        {% if data.post|length > 0 %}
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">POST Parameters</h3>
+                
+                <div style="font-family: monospace; font-size: 12px;">
+                    {% for key, value in data.post %}
+                        <div style="display: flex; padding: 0.5rem; border-bottom: 1px solid #f1f3f4;">
+                            <span style="width: 150px; color: #6c757d; font-weight: bold;">{{ key }}:</span>
+                            <span style="flex: 1; word-break: break-all;">{{ value|json_encode }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Headers -->
+        {% if data.headers|length > 0 %}
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">HTTP Headers</h3>
+                
+                <div style="font-family: monospace; font-size: 12px;">
+                    {% for key, value in data.headers %}
+                        <div style="display: flex; padding: 0.5rem; border-bottom: 1px solid #f1f3f4;">
+                            <span style="width: 200px; color: #6c757d; font-weight: bold;">{{ key }}:</span>
+                            <span style="flex: 1; word-break: break-all;">{{ value }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Cookies -->
+        {% if data.cookies|length > 0 %}
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">Cookies</h3>
+                
+                <div style="font-family: monospace; font-size: 12px;">
+                    {% for key, value in data.cookies %}
+                        <div style="display: flex; padding: 0.5rem; border-bottom: 1px solid #f1f3f4;">
+                            <span style="width: 150px; color: #6c757d; font-weight: bold;">{{ key }}:</span>
+                            <span style="flex: 1; word-break: break-all;">{{ value }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Session Data -->
+        {% if data.session|length > 0 %}
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">Session Data</h3>
+                
+                <div style="font-family: monospace; font-size: 12px;">
+                    {% for key, value in data.session %}
+                        <div style="display: flex; padding: 0.5rem; border-bottom: 1px solid #f1f3f4;">
+                            <span style="width: 150px; color: #6c757d; font-weight: bold;">{{ key }}:</span>
+                            <span style="flex: 1; word-break: break-all;">{{ value|json_encode }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

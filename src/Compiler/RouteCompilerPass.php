@@ -23,6 +23,13 @@ class RouteCompilerPass implements CompilerPassInterface
         $yaml = Yaml::parseFile($routesFile);
         $routes = $yaml['routes'] ?? [];
 
+        // Let's add PATH_VAR/config/routes.yaml as a default route file
+        $defaultRoutesFile = PATH_ROOT . '/var/config/routes.yaml';
+        if (file_exists($defaultRoutesFile)) {
+            $defaultYaml = Yaml::parseFile($defaultRoutesFile);
+            $routes = array_merge($routes, $defaultYaml['routes'] ?? []);
+        }
+
         // Sanity check
         foreach ($routes as $route) {
             // Missing required keys

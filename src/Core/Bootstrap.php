@@ -22,6 +22,7 @@ class Bootstrap
             '%PATH_PUBLIC%'   => defined('PATH_PUBLIC') ? PATH_PUBLIC : '',
             '%PATH_VENDOR%'   => defined('PATH_VENDOR') ? PATH_VENDOR : '',
             '%PATH_LOG%'      => defined('PATH_LOG') ? PATH_LOG : '',
+            '%PATH_VAR%'      => defined('PATH_VAR') ? PATH_VAR : '',
         ];
 
         if (!empty(Config::getInstance()->get('database'))) {

@@ -3,18 +3,18 @@
 
 declare(strict_types=1);
 
-define('PATH_ROOT', __DIR__ .'/..');
-define('PATH_CORE', PATH_ROOT . '/src');
-define('PATH_APP', PATH_ROOT . '/app');
-define('PATH_CONFIG', PATH_ROOT . '/config');
-define('PATH_CACHE', PATH_ROOT . '/cache');
-define('PATH_TEMPLATE', PATH_ROOT . '/templates');
-define('PATH_PUBLIC', PATH_ROOT . '/public');
-define('PATH_VENDOR', PATH_ROOT . '/vendor');
-define('PATH_LOG', PATH_ROOT . '/logs/app.log');
-define('PATH_VAR', PATH_ROOT . '/var');
-define('PATH_VAR_CONFIG', PATH_VAR . '/config');
-define('PATH_MIGRATIONS', PATH_ROOT . '/migrations');
+const PATH_ROOT = __DIR__ . '/..';
+const PATH_CORE = PATH_ROOT . '/src';
+const PATH_APP = PATH_ROOT . '/app';
+const PATH_CONFIG = PATH_ROOT . '/config';
+const PATH_CACHE = PATH_ROOT . '/cache';
+const PATH_TEMPLATE = PATH_ROOT . '/templates';
+const PATH_PUBLIC = PATH_ROOT . '/public';
+const PATH_VENDOR = PATH_ROOT . '/vendor';
+const PATH_LOG = PATH_ROOT . '/logs/app.log';
+const PATH_VAR = PATH_ROOT . '/var';
+const PATH_VAR_CONFIG = PATH_VAR . '/config';
+const PATH_MIGRATIONS = PATH_ROOT . '/migrations';
 
 require __DIR__ . '/../vendor/autoload.php';
 

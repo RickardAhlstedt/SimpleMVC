@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}SimpleMVC Debug Profiler{% endblock %}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: #f8f9fa; height: 100vh; overflow: hidden; }
+        
+        .header { 
+            background: #1a1a1a; 
+            color: white; 
+            padding: 1rem 2rem; 
+            border-bottom: 2px solid #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header h1 { font-size: 1.5rem; }
+        .header .meta { font-size: 0.9rem; color: #adb5bd; }
+        
+        .container { 
+            display: flex; 
+            height: calc(100vh - 80px); 
+        }
+        
+        .sidebar { 
+            width: 280px; 
+            background: white; 
+            border-right: 1px solid #dee2e6;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .collector-nav {
+            list-style: none;
+        }
+        
+        .collector-nav li {
+            border-bottom: 1px solid #f1f3f4;
+        }
+        
+        .collector-nav a {
+            display: block;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: #495057;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .collector-nav a:hover {
+            background: #f8f9fa;
+            color: #007bff;
+        }
+        
+        .collector-nav a.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .collector-icon { font-size: 1.1rem; }
+        .collector-badge { 
+            margin-left: auto; 
+            background: #6c757d; 
+            color: white; 
+            padding: 0.2rem 0.5rem; 
+            border-radius: 10px; 
+            font-size: 0.75rem;
+        }
+        .collector-nav a.active .collector-badge { background: rgba(255,255,255,0.2); }
+        
+        .content { 
+            flex: 1; 
+            padding: 2rem; 
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+        
+        .content-header {
+            margin-bottom: 2rem;
+        }
+        .content-header h2 {
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+        .content-header .description {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🛠️ SimpleMVC Debug Profiler</h1>
+        </div>
+        <div class="meta">
+            <div>Request ID: <code>{{ requestId }}</code></div>
+            <div>{{ data.timestamp|date('Y-m-d H:i:s') }}</div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-header">Collectors</div>
+            <ul class="collector-nav">
+                <li>
+                    <a href="/debug/{{ requestId }}" {% if not currentCollector %}class="active"{% endif %}>
+                        <span class="collector-icon">📊</span>
+                        <span>Overview</span>
+                    </a>
+                </li>
+                {% for name, collectorData in collectors %}
+                    {% set collector = collectors[name] is defined ? collectors[name] : null %}
+                    <li>
+                        <a href="/debug/{{ requestId }}/{{ name }}" {% if currentCollector == name %}class="active"{% endif %}>
+                            <span class="collector-icon">
+                                {% if collector %}
+                                    {{ collector.icon }}
+                                {% else %}
+                                    📄
+                                {% endif %}
+                            </span>
+                            <span>
+                                {% if collector %}
+                                    {{ collector.label }}
+                                {% else %}
+                                    {{ name|title }}
+                                {% endif %}
+                            </span>
+                            {% if name == 'database' and collectorData.query_count is defined %}
+                                <span class="collector-badge">{{ collectorData.query_count }}</span>
+                            {% elseif name == 'dump' and collectorData.dump_count is defined %}
+                                <span class="collector-badge">{{ collectorData.dump_count }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+        
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

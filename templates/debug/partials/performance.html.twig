@@ -1,0 +1,128 @@
+{% extends "debug/layout.html.twig" %}
+
+{% block content %}
+    <div class="content-header">
+        <h2>⚡ Performance Metrics</h2>
+        <p class="description">Memory usage, execution time and performance statistics for this request.</p>
+    </div>
+
+    <div style="display: grid; gap: 1.5rem;">
+        <!-- Performance Overview -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                <div style="font-size: 2.5rem; color: #007bff; font-weight: bold;">{{ (data.execution_time * 1000)|round(2) }}</div>
+                <div style="color: #6c757d; font-size: 0.9rem;">Execution Time (ms)</div>
+                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #28a745;">
+                    {% if data.execution_time < 0.1 %}
+                        Excellent
+                    {% elseif data.execution_time < 0.5 %}
+                        Good
+                    {% elseif data.execution_time < 1.0 %}
+                        Fair
+                    {% else %}
+                        Slow
+                    {% endif %}
+                </div>
+            </div>
+
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                <div style="font-size: 2.5rem; color: #28a745; font-weight: bold;">{{ (data.memory_usage / 1024 / 1024)|round(2) }}</div>
+                <div style="color: #6c757d; font-size: 0.9rem;">Current Memory (MB)</div>
+                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #6c757d;">
+                    {% if data.memory_peak > 0 %}
+                        {{ ((data.memory_usage / data.memory_peak) * 100)|round(1) }}% of peak
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </div>
+            </div>
+
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                <div style="font-size: 2.5rem; color: #ffc107; font-weight: bold;">{{ (data.memory_peak / 1024 / 1024)|round(2) }}</div>
+                <div style="color: #6c757d; font-size: 0.9rem;">Peak Memory (MB)</div>
+                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #dc3545;">
+                    +{{ (data.memory_diff / 1024 / 1024)|round(2) }}MB used
+                </div>
+            </div>
+
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                <div style="font-size: 2.5rem; color: #6c757d; font-weight: bold;">{{ (data.memory_start / 1024 / 1024)|round(2) }}</div>
+                <div style="color: #6c757d; font-size: 0.9rem;">Start Memory (MB)</div>
+                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #6c757d;">
+                    Base usage
+                </div>
+            </div>
+        </div>
+
+        <!-- Memory Usage Chart (Simple Progress Bar) -->
+        <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">Memory Usage Visualization</h3>
+            
+            {% set memory_limit = 128 * 1024 * 1024 %} {# 128MB default #}
+            {% set peak_percentage = (data.memory_peak / memory_limit) * 100 %}
+            {% set current_percentage = (data.memory_usage / memory_limit) * 100 %}
+            
+            <div style="margin: 1rem 0;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                    <span>Memory Usage</span>
+                    <span>{{ (data.memory_usage / 1024 / 1024)|round(2) }}MB / {{ (memory_limit / 1024 / 1024)|round(0) }}MB</span>
+                </div>
+                <div style="background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden; position: relative;">
+                    <div style="background: linear-gradient(90deg, #28a745, #ffc107{% if current_percentage > 80 %}, #dc3545{% endif %}); height: 100%; width: {{ current_percentage }}%; transition: width 0.3s;"></div>
+                </div>
+            </div>
+
+            <div style="margin: 1rem 0;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                    <span>Peak Memory</span>
+                    <span>{{ (data.memory_peak / 1024 / 1024)|round(2) }}MB / {{ (memory_limit / 1024 / 1024)|round(0) }}MB</span>
+                </div>
+                <div style="background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden; position: relative;">
+                    <div style="background: linear-gradient(90deg, #ffc107, #dc3545); height: 100%; width: {{ peak_percentage }}%; transition: width 0.3s;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Details -->
+        <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">Performance Details</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                <div>
+                    <h4 style="color: #495057; margin: 0 0 0.5rem 0;">Execution Time</h4>
+                    <div style="font-family: monospace; font-size: 12px; background: #f8f9fa; padding: 1rem; border-radius: 4px;">
+                        <div>Total: {{ (data.execution_time * 1000)|round(3) }}ms</div>
+                        <div>Seconds: {{ data.execution_time|round(6) }}s</div>
+                        <div>Microseconds: {{ (data.execution_time * 1000000)|round(0) }}μs</div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="color: #495057; margin: 0 0 0.5rem 0;">Memory Statistics</h4>
+                    <div style="font-family: monospace; font-size: 12px; background: #f8f9fa; padding: 1rem; border-radius: 4px;">
+                        <div>Start: {{ (data.memory_start / 1024 / 1024)|round(2) }}MB</div>
+                        <div>Current: {{ (data.memory_usage / 1024 / 1024)|round(2) }}MB</div>
+                        <div>Peak: {{ (data.memory_peak / 1024 / 1024)|round(2) }}MB</div>
+                        <div>Difference: +{{ (data.memory_diff / 1024 / 1024)|round(2) }}MB</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Tips -->
+            <div style="margin-top: 1.5rem; padding: 1rem; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 0 4px 4px 0;">
+                <h5 style="color: #1976d2; margin: 0 0 0.5rem 0;">💡 Performance Tips</h5>
+                <ul style="margin: 0; padding-left: 1.5rem; color: #1565c0; font-size: 0.9rem;">
+                    {% if data.execution_time > 1.0 %}
+                        <li>Consider optimizing slow operations or adding caching</li>
+                    {% endif %}
+                    {% if (data.memory_peak / 1024 / 1024) > 64 %}
+                        <li>High memory usage detected - review data loading and processing</li>
+                    {% endif %}
+                    {% if data.execution_time < 0.1 and (data.memory_usage / 1024 / 1024) < 32 %}
+                        <li>Great performance! 🚀</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

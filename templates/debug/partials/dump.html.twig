@@ -1,0 +1,103 @@
+{% extends "debug/layout.html.twig" %}
+
+{% block content %}
+    <div class="content-header">
+        <h2>🪣 Dumps ({{ data.dump_count }})</h2>
+        <p class="description">Variables dumped during this request using dump() function.</p>
+    </div>
+    
+    {% if data.dump_count == 0 %}
+        <div style="background: white; padding: 2rem; border-radius: 8px; text-align: center; color: #6c757d; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <p>No dumps collected during this request.</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;">Use <code>{{ '{{ dump(variable) }}' }}</code> in your templates to collect dump data.</p>
+        </div>
+    {% else %}
+        {% for dump in data.dumps %}
+            <div style="background: white; margin-bottom: 1.5rem; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="background: #6c757d; color: white; padding: 0.75rem 1.5rem; font-size: 12px;">
+                    <strong>{{ dump.type|title }}</strong>
+                    {% if dump.label %} - {{ dump.label }}{% endif %}
+                    <div style="color: rgba(255,255,255,0.8); font-size: 11px; margin-top: 0.25rem;">
+                        {{ dump.file|split('/')|last }}:{{ dump.line }} 
+                        {% if dump.class %}in {{ dump.class }}::{{ dump.function }}(){% endif %}
+                    </div>
+                </div>
+                <div style="padding: 1.5rem;">
+                    {% if dump.serialized.type == 'object' %}
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin: 0;">
+                            <div style="color: #007bff; font-weight: bold; margin-bottom: 0.5rem;">
+                                Object: {{ dump.serialized.class }}
+                            </div>
+                            {% if dump.serialized.properties|length > 0 %}
+                                {% for propName, propData in dump.serialized.properties %}
+                                    <div style="margin: 0.5rem 0; padding-left: 1rem;">
+                                        <span style="color: #6c757d; font-size: 0.8rem;">[{{ propData.visibility }}]</span>
+                                        <span style="font-weight: bold;">{{ propName }}:</span>
+                                        <span style="color: #28a745;">
+                                            {% if propData.value.type == 'string' %}
+                                                "{{ propData.value.value }}"
+                                            {% elseif propData.value.type == 'array' %}
+                                                array({{ propData.value.count }})
+                                            {% else %}
+                                                {{ propData.value.value }}
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div style="color: #6c757d; font-style: italic;">No accessible properties</div>
+                            {% endif %}
+                        </div>
+                    {% elseif dump.serialized.type == 'array' %}
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin: 0;">
+                            <div style="color: #007bff; font-weight: bold; margin-bottom: 0.5rem;">
+                                Array ({{ dump.serialized.count }} items)
+                            </div>
+                            {% if dump.serialized.data|length > 0 %}
+                                {% for key, value in dump.serialized.data %}
+                                    <div style="margin: 0.5rem 0; padding-left: 1rem;">
+                                        <span style="font-weight: bold;">[{{ key }}]:</span>
+                                        <span style="color: #28a745;">
+                                            {% if value.type == 'string' %}
+                                                "{{ value.value }}"
+                                            {% elseif value.type == 'array' %}
+                                                array({{ value.count }})
+                                            {% elseif value.type == 'object' %}
+                                                {{ value.class }}
+                                            {% else %}
+                                                {{ value.value }}
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                {% endfor %}
+                                {% if dump.serialized.count > dump.serialized.data|length %}
+                                    <div style="color: #6c757d; font-style: italic; padding-left: 1rem;">
+                                        ... and {{ dump.serialized.count - dump.serialized.data|length }} more items
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <div style="color: #6c757d; font-style: italic;">Empty array</div>
+                            {% endif %}
+                        </div>
+                    {% elseif dump.serialized.type == 'resource' %}
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin: 0;">
+                            <div style="color: #dc3545; font-weight: bold;">
+                                Resource: {{ dump.serialized.resource_type }}
+                            </div>
+                            <div style="color: #6c757d; margin-top: 0.5rem;">
+                                {{ dump.serialized.value }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin: 0;">
+                            <div style="color: #6c757d; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                {{ dump.serialized.type|title }}:
+                            </div>
+                            <pre style="margin: 0; font-family: monospace; color: #495057;">{% if dump.serialized.type == 'string' %}"{{ dump.serialized.value }}"{% else %}{{ dump.serialized.value }}{% endif %}</pre>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

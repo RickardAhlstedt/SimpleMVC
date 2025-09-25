@@ -11,8 +11,11 @@ use SimpleMVC\Core\Container;
 use SimpleMVC\Core\HTTP\RequestStack;
 use SimpleMVC\Core\HTTP\Response;
 
+use SimpleMVC\Core\HTTP\Session;
 use SimpleMVC\Database\EntityManager;
 use SimpleMVC\Security\PasswordHasher;
+
+use SimpleMVC\Support\Debug;
 
 #[Controller]
 class HomeController extends \SimpleMVC\Core\HTTP\AbstractController
@@ -42,11 +45,12 @@ class HomeController extends \SimpleMVC\Core\HTTP\AbstractController
 //        $queue = Container::getInstance()?->get(\SimpleMVC\Queue\DatabaseQueueDriver::class);
 //        $queue->dispatch('TestJob', [$request]);
 
-        $workflowManager = Container::getInstance()?->get(\SimpleMVC\Workflow\WorkflowManager::class);
-
         $user = $userRepo->find(1);
 
-        $currentState = $workflowManager->getCurrentState($user);
+        Session::start();
+        Session::set('user', $user);
+
+        Debug::dump($user, 'Fetched User');
 
         return new Response($this->render('home.html.twig', ['name' => 'World', 'user' => $user]), 200);
     }

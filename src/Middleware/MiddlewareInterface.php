@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace SimpleMVC\Middleware;
 
+use SimpleMVC\Core\HTTP\RequestStack;
+use SimpleMVC\Core\HTTP\Response;
+
 interface MiddlewareInterface
 {
     /**
-     * @param array $route The matched route array.
-     * @return bool Return true to continue, false to stop (e.g. for auth failure).
+     * Process the request through middleware.
+     * 
+     * @param RequestStack $request The request object
+     * @param callable $next The next middleware in the chain
+     * @return Response The response object
      */
-    public function handle(array $route): bool;
+    public function process(RequestStack $request, callable $next): Response;
 }

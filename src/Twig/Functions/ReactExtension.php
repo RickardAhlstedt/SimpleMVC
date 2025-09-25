@@ -7,6 +7,11 @@ use Twig\TwigFunction;
 
 class ReactExtension implements TwigFunctionInterface
 {
+    public function isStatic(): bool
+    {
+        return false;
+    }
+
     public function getFunctions(): array
     {
         return [

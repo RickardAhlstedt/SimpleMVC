@@ -1,0 +1,12 @@
+routes:
+  - name: debug_profiler
+    path: /debug/{requestId}
+    controller: SimpleMVC\Debug\Controller\DebugController
+    action: profiler
+    method: GET
+    
+  - name: debug_profiler_collector
+    path: /debug/{requestId}/{collectorName}
+    controller: SimpleMVC\Debug\Controller\DebugController
+    action: collector
+    method: GET

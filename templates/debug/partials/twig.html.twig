@@ -1,0 +1,112 @@
+{% extends "debug/layout.html.twig" %}
+
+{% block content %}
+    <div class="content-header">
+        <h2>🎨 Twig Templates ({{ data.template_count }})</h2>
+        <p class="description">Template rendering information, timing and context data.</p>
+    </div>
+
+    {% if data.template_count == 0 %}
+        <div style="background: white; padding: 2rem; border-radius: 8px; text-align: center; color: #6c757d; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <p>No templates were rendered during this request.</p>
+        </div>
+    {% else %}
+        <!-- Summary Stats -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <div style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                <div style="font-size: 2rem; color: #007bff; font-weight: bold;">{{ data.template_count }}</div>
+                <div style="color: #6c757d; font-size: 0.9rem;">Templates Rendered</div>
+            </div>
+            <div style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                <div style="font-size: 2rem; color: #28a745; font-weight: bold;">{{ (data.total_render_time * 1000)|round(2) }}ms</div>
+                <div style="color: #6c757d; font-size: 0.9rem;">Total Render Time</div>
+            </div>
+            <div style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                <div style="font-size: 2rem; color: #ffc107; font-weight: bold;">{{ ((data.total_render_time / data.template_count) * 1000)|round(2) }}ms</div>
+                <div style="color: #6c757d; font-size: 0.9rem;">Average Render Time</div>
+            </div>
+        </div>
+
+        <!-- Template Tree -->
+        {% if data.template_tree|length > 0 %}
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">Template Hierarchy</h3>
+                
+                {% for node in data.template_tree %}
+                    {{ _self.render_template_node(node, 0) }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Most Used Templates -->
+        {% if data.most_used_templates|length > 0 %}
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">Most Used Templates</h3>
+                
+                {% for template, count in data.most_used_templates %}
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #f1f3f4;">
+                        <span style="font-family: monospace; color: #007bff;">{{ template }}</span>
+                        <strong style="color: #28a745;">{{ count }}x</strong>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Slowest Templates -->
+        {% if data.slowest_templates|length > 0 %}
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">Slowest Templates</h3>
+                
+                {% for template in data.slowest_templates %}
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #f1f3f4;">
+                        <span style="font-family: monospace; color: #007bff;">{{ template.template }}</span>
+                        <strong style="color: #dc3545;">{{ (template.render_time * 1000)|round(2) }}ms</strong>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- All Templates -->
+        <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin: 0 0 1rem 0; color: #1a1a1a; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">All Rendered Templates</h3>
+            
+            {% for template in data.templates %}
+                <div style="border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 1rem; overflow: hidden;">
+                    <div style="background: #f8f9fa; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-family: monospace; color: #007bff; font-weight: bold;">{{ template.template }}</span>
+                        <div style="display: flex; gap: 1rem; font-size: 0.9rem;">
+                            {% if template.render_time is defined %}
+                                <span style="color: #28a745;">{{ (template.render_time * 1000)|round(2) }}ms</span>
+                            {% endif %}
+                            <span style="color: #6c757d;">{{ template.context_size }} vars</span>
+                            <span style="color: #6c757d;">depth: {{ template.depth }}</span>
+                        </div>
+                    </div>
+                    
+                    {% if template.context_preview|length > 0 %}
+                        <div style="padding: 1rem;">
+                            <strong style="color: #495057;">Context Variables:</strong>
+                            <div style="background: #f8f9fa; padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0; font-family: monospace; font-size: 0.8rem;">
+                                {% for key, value in template.context_preview %}
+                                    <div><span style="color: #e83e8c;">{{ key }}:</span> <span style="color: #6c757d;">{{ value|json_encode }}</span></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% macro render_template_node(node, depth) %}
+    <div style="margin-left: {{ depth * 20 }}px; padding: 0.25rem 0;">
+        <span style="color: #007bff; font-family: monospace;">{{ node.template }}</span>
+        {% if node.render_time > 0 %}
+            <span style="color: #28a745; font-size: 0.8rem;">({{ (node.render_time * 1000)|round(2) }}ms)</span>
+        {% endif %}
+        {% for child in node.children %}
+            {{ _self.render_template_node(child, depth + 1) }}
+        {% endfor %}
+    </div>
+{% endmacro %}

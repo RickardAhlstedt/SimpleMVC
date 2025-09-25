@@ -1,0 +1,70 @@
+{% extends "debug/layout.html.twig" %}
+
+{% block content %}
+    <div class="content-header">
+        <h2>🗄️ Database Queries ({{ data.query_count }})</h2>
+        <p class="description">SQL queries executed during this request with timing and parameters.</p>
+    </div>
+
+    {% if data.query_count == 0 %}
+        <div style="background: white; padding: 2rem; border-radius: 8px; text-align: center; color: #6c757d; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <p>No database queries were executed during this request.</p>
+        </div>
+    {% else %}
+        <!-- Summary Stats -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <div style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                <div style="font-size: 2rem; color: #007bff; font-weight: bold;">{{ data.query_count }}</div>
+                <div style="color: #6c757d; font-size: 0.9rem;">Total Queries</div>
+            </div>
+            <div style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                <div style="font-size: 2rem; color: #28a745; font-weight: bold;">{{ (data.total_time * 1000)|round(2) }}ms</div>
+                <div style="color: #6c757d; font-size: 0.9rem;">Total Time</div>
+            </div>
+            {% if data.query_count > 0 %}
+            <div style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                <div style="font-size: 2rem; color: #ffc107; font-weight: bold;">{{ ((data.total_time / data.query_count) * 1000)|round(2) }}ms</div>
+                <div style="color: #6c757d; font-size: 0.9rem;">Average Time</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Query List -->
+        <div style="display: grid; gap: 1rem;">
+            {% for query in data.queries %}
+                <div style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="background: #f8f9fa; padding: 0.75rem 1.5rem; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-weight: bold; color: #495057;">Query #{{ loop.index }}</div>
+                        <div style="display: flex; gap: 1rem; font-size: 0.9rem;">
+                            <span style="color: #28a745;">{{ (query.time * 1000)|round(2) }}ms</span>
+                            {% if query.params is defined and query.params|length > 0 %}
+                                <span style="color: #6c757d;">{{ query.params|length }} params</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 1.5rem;">
+                        <div style="margin-bottom: 1rem;">
+                            <strong style="color: #495057;">SQL:</strong>
+                            <pre style="background: #f8f9fa; padding: 1rem; border-radius: 4px; overflow-x: auto; margin: 0.5rem 0; font-size: 0.9rem; border-left: 3px solid #007bff;">{{ query.sql }}</pre>
+                        </div>
+                        
+                        {% if query.params is defined and query.params|length > 0 %}
+                            <div style="margin-bottom: 1rem;">
+                                <strong style="color: #495057;">Parameters:</strong>
+                                <div style="background: #fff3e0; padding: 1rem; border-radius: 4px; margin: 0.5rem 0; font-family: monospace; font-size: 0.85rem; border-left: 3px solid #ffc107;">
+                                    {% for key, value in query.params %}
+                                        <div style="margin: 0.25rem 0;">
+                                            <span style="color: #e83e8c; font-weight: bold;">[{{ key }}]</span> 
+                                            <span style="color: #495057;">{{ value|json_encode }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

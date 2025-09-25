@@ -51,6 +51,10 @@ class CacheClearCommand extends BaseCommand
         $method->setAccessible(true);
         $method->invoke($app);
 
+        // Deleting any files left in /var/debug
+        $debugDir = PATH_VAR . '/debug';
+        $this->deleteDirectory($debugDir);
+
         echo "Cache warmed up.\n";
         return 0;
     }
